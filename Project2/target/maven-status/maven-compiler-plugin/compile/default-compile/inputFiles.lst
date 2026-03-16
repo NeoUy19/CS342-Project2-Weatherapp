@@ -1,12 +1,15 @@
-F:\Documents and Settings\neouy\IdeaProjects\CS342-Project2-Weatherapp\Project2\src\main\java\Home Scene\MainController.java
-F:\Documents and Settings\neouy\IdeaProjects\CS342-Project2-Weatherapp\Project2\src\main\java\Home Scene\MainUI.java
-F:\Documents and Settings\neouy\IdeaProjects\CS342-Project2-Weatherapp\Project2\src\main\java\JavaFX.java
-F:\Documents and Settings\neouy\IdeaProjects\CS342-Project2-Weatherapp\Project2\src\main\java\MyWeatherAPI.java
-F:\Documents and Settings\neouy\IdeaProjects\CS342-Project2-Weatherapp\Project2\src\main\java\Settings Scene\SettingsUI.java
-F:\Documents and Settings\neouy\IdeaProjects\CS342-Project2-Weatherapp\Project2\src\main\java\weather\Elevation.java
-F:\Documents and Settings\neouy\IdeaProjects\CS342-Project2-Weatherapp\Project2\src\main\java\weather\Geometry.java
-F:\Documents and Settings\neouy\IdeaProjects\CS342-Project2-Weatherapp\Project2\src\main\java\weather\Period.java
-F:\Documents and Settings\neouy\IdeaProjects\CS342-Project2-Weatherapp\Project2\src\main\java\weather\ProbabilityOfPrecipitation.java
-F:\Documents and Settings\neouy\IdeaProjects\CS342-Project2-Weatherapp\Project2\src\main\java\weather\Properties.java
-F:\Documents and Settings\neouy\IdeaProjects\CS342-Project2-Weatherapp\Project2\src\main\java\weather\Root.java
-F:\Documents and Settings\neouy\IdeaProjects\CS342-Project2-Weatherapp\Project2\src\main\java\weather\WeatherAPI.java
+/Users/adilatic/Documents/CS342/02.19.javafx.complete/CS342-Project2-Weatherapp/Project2/src/main/java/7Day Scene/ForcastUI.java
+/Users/adilatic/Documents/CS342/02.19.javafx.complete/CS342-Project2-Weatherapp/Project2/src/main/java/7Day Scene/ForecastController.java
+/Users/adilatic/Documents/CS342/02.19.javafx.complete/CS342-Project2-Weatherapp/Project2/src/main/java/Home Scene/MainController.java
+/Users/adilatic/Documents/CS342/02.19.javafx.complete/CS342-Project2-Weatherapp/Project2/src/main/java/Home Scene/MainUI.java
+/Users/adilatic/Documents/CS342/02.19.javafx.complete/CS342-Project2-Weatherapp/Project2/src/main/java/JavaFX.java
+/Users/adilatic/Documents/CS342/02.19.javafx.complete/CS342-Project2-Weatherapp/Project2/src/main/java/MyWeatherAPI.java
+/Users/adilatic/Documents/CS342/02.19.javafx.complete/CS342-Project2-Weatherapp/Project2/src/main/java/Settings Scene/SettingsController.java
+/Users/adilatic/Documents/CS342/02.19.javafx.complete/CS342-Project2-Weatherapp/Project2/src/main/java/Settings Scene/SettingsUI.java
+/Users/adilatic/Documents/CS342/02.19.javafx.complete/CS342-Project2-Weatherapp/Project2/src/main/java/weather/Elevation.java
+/Users/adilatic/Documents/CS342/02.19.javafx.complete/CS342-Project2-Weatherapp/Project2/src/main/java/weather/Geometry.java
+/Users/adilatic/Documents/CS342/02.19.javafx.complete/CS342-Project2-Weatherapp/Project2/src/main/java/weather/Period.java
+/Users/adilatic/Documents/CS342/02.19.javafx.complete/CS342-Project2-Weatherapp/Project2/src/main/java/weather/ProbabilityOfPrecipitation.java
+/Users/adilatic/Documents/CS342/02.19.javafx.complete/CS342-Project2-Weatherapp/Project2/src/main/java/weather/Properties.java
+/Users/adilatic/Documents/CS342/02.19.javafx.complete/CS342-Project2-Weatherapp/Project2/src/main/java/weather/Root.java
+/Users/adilatic/Documents/CS342/02.19.javafx.complete/CS342-Project2-Weatherapp/Project2/src/main/java/weather/WeatherAPI.java

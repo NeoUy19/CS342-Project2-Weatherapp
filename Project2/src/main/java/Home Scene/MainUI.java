@@ -9,29 +9,35 @@ import javafx.stage.Stage;
 import javafx.geometry.Pos;
 import javafx.geometry.Insets;
 import javafx.scene.text.Font;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 
 import weather.Period;
 import weather.WeatherAPI;
 
 import java.util.ArrayList;
 public class MainUI{
-    private VBox vb;
+    private VBox vb, vb1;                //Declared variables
     private HBox hb,hb2;
-    private Button settings,curr;
+    private Button settings, searchBtn;
     private BorderPane bp;
     private TextField searchTF;
+    private Label currentWeather, curr;
     public Scene buildHome(){
-        searchTF = new TextField();
+        searchTF = new TextField();     //Declared TextField
         searchTF.setPromptText("Where to?");
         settings = new Button("Settings");
 
+        searchBtn = new Button("Search");
 
-        curr = new Button();
-        curr.setPrefSize(360,80);
+        curr = new Label();
+        curr.setPrefSize(360,80);       //Setting the label size
 
-        ArrayList<Period> forecast = WeatherAPI.getForecast("LOT", 77, 70);
+        ArrayList<Period> forecast = WeatherAPI.getForecast("LOT", 77, 70);     //Location of Chicago
         if (forecast != null) {
             Period today = forecast.get(0);
+            currentWeather = new Label(today.temperature + "°  \n");
+            currentWeather.setStyle("-fx-font-size: 96px; -fx-weight: bold;");
             curr.setText("Current City:" + today.temperature + "°  \n" + today.shortForecast);
             curr.setFont(Font.font(14)); // adjust size to fit
             curr.setWrapText(true);
@@ -40,16 +46,19 @@ public class MainUI{
         }
         hb = new HBox(settings);
         hb.setAlignment(Pos.TOP_RIGHT);
-        vb = new VBox(20,hb,curr);
-
+        vb = new VBox(-10,currentWeather, curr, searchTF);
+        vb1 = new VBox(searchBtn);
+        vb.setMargin(currentWeather, new Insets(0,0,0,90));     //Centers the large number
+        vb1.setMargin(searchBtn, new Insets(0,0,335,125));
         bp = new BorderPane();
+        bp.setTop(hb);
         bp.setCenter(vb);
-        bp.setBottom(searchTF);
         bp.setPadding(new Insets(20));
+        bp.setBottom(vb1);
 
         return new Scene(bp,360,640);
     }
     public Button getSettings(){return settings;}
-    public Button getCurr(){return curr;}
+    public Label getCurr(){return curr;}
     public TextField getSearchTF(){return searchTF;}
 }
