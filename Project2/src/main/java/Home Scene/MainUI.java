@@ -11,25 +11,30 @@ import javafx.geometry.Insets;
 import javafx.scene.text.Font;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.ScrollPane;
 
 import weather.Period;
 import weather.WeatherAPI;
 
 import java.util.ArrayList;
 public class MainUI{
-    private VBox vb, vb1;                //Declared variables
-    private HBox hb,hb2;
+    private VBox vb, vb1, weatherForecastvb;                //Declared variables
+    private HBox hb,hb2, Mondayhb, Tuesdayhb, Wednesdayhb, Thursdayhb, Fridayhb, Saturdayhb, Sundayhb;
     private Button settings, searchBtn;
     private BorderPane bp;
     private TextField searchTF;
-    private Label currentWeather, curr;
+    private Label currentWeather, curr, Mondaylabel;
+    private ScrollPane scrollPane;
+
     public Scene buildHome(){
         searchTF = new TextField();     //Declared TextField
         searchTF.setPromptText("Where to?");
         settings = new Button("Settings");
-
         searchBtn = new Button("Search");
 
+        scrollPane = new ScrollPane();
+
+        Mondaylabel = new Label();
         curr = new Label();
         curr.setPrefSize(360,80);       //Setting the label size
 
@@ -44,17 +49,22 @@ public class MainUI{
         } else {
             curr.setText("Could not load weather");
         }
+
         hb = new HBox(settings);
+        Mondayhb = new HBox(Mondaylabel);
         hb.setAlignment(Pos.TOP_RIGHT);
-        vb = new VBox(-10,currentWeather, curr, searchTF);
-        vb1 = new VBox(searchBtn);
+        vb = new VBox(-10,currentWeather, curr, searchTF, searchBtn);
+        vb1 = new VBox(scrollPane);
         vb.setMargin(currentWeather, new Insets(0,0,0,90));     //Centers the large number
-        vb1.setMargin(searchBtn, new Insets(0,0,335,125));
+        vb.setMargin(searchBtn, new Insets(20,0,125,125));
+        vb1.setMargin(scrollPane, new Insets(0,0,120,0));
         bp = new BorderPane();
         bp.setTop(hb);
         bp.setCenter(vb);
         bp.setPadding(new Insets(20));
         bp.setBottom(vb1);
+        weatherForecastvb = new VBox(20, Mondayhb);
+        scrollPane.setContent(weatherForecastvb);
 
         return new Scene(bp,360,640);
     }
