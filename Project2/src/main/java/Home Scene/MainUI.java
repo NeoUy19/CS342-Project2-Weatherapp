@@ -18,12 +18,12 @@ import weather.WeatherAPI;
 
 import java.util.ArrayList;
 public class MainUI{
-    private VBox vb, vb1, weatherForecastvb;                //Declared variables
-    private HBox hb,hb2, d1hb, d2hb, d3hb, d4hb, d5hb, d6hb, d7hb;
-    private Button settings, searchBtn;
+    private VBox vb, vb1, weatherForecastvb, currentDay, sevDay, dayLocvb;                //Declared variables
+    private HBox hb,hb2,sevDayhb;
+    private Button settings, searchBtn, dayBtn, nightBtn;
     private BorderPane bp;
     private TextField searchTF;
-    private Label currentWeather, curr, d1L,d2L, d3L, d4L, d5L,d6L,d7L;
+    private Label currentWeather, location, curr, sevDayL, sftLab;
     private ScrollPane scrollPane;
 
     public Scene buildHome(){
@@ -31,85 +31,62 @@ public class MainUI{
         searchTF.setPromptText("Where to?");
         settings = new Button("Settings");
         searchBtn = new Button("Search");
+        sevDayL = new Label("7-DAY FORECAST");
+        sevDayL.setStyle("-fx-font-size: 15px; -fx-font-family: 'Georgia';");
+        dayBtn = new Button("Day");
+        nightBtn = new Button ("Night");
+        weatherForecastvb = new VBox();
+        ArrayList<Period> forecast = WeatherAPI.getForecast("LOT", 77, 70);
 
 
         curr = new Label();
-        curr.setPrefSize(360,80);       //Setting the label size
-
-        ArrayList<Period> forecast = WeatherAPI.getForecast("LOT", 77, 70);     //Location of Chicago
         if (forecast != null) {
             Period today = forecast.get(0);
+            String nameStr = today.name;
             currentWeather = new Label(today.temperature + "°  \n");
+            location = new Label("Chicago");
+            sftLab = new Label("" + today.name);
+            location.setStyle("-fx-font-size: 25px; -fx-font-family: 'Georgia';");
+            dayLocvb = new VBox (location, sftLab);
+            curr.setText(forecast.get(0).shortForecast);
+            curr.setStyle("-fx-font-size: 15px; -fx-font-family: 'Georgia';");
             currentWeather.setStyle("-fx-font-size: 96px; -fx-weight: bold;");
             curr.setWrapText(true);
-            if (forecast.get(0).name.contains("night") == true){
-                d1L = new Label(forecast.get(1).name + " " + forecast.get(1).temperature + "°  " + forecast.get(1).shortForecast + "\n" + forecast.get(2).name + " " + forecast.get(2).temperature + "°  " + forecast.get(2).shortForecast);
-                d1L.setWrapText(true);
-                d2L = new Label(forecast.get(3).name + " " + forecast.get(3).temperature + "°  " + forecast.get(3).shortForecast + "\n" + forecast.get(4).name + " " + forecast.get(4).temperature + "°  " + forecast.get(4).shortForecast);
-                d2L.setWrapText(true);
-                d3L = new Label(forecast.get(5).name + " " + forecast.get(5).temperature + "°  " + forecast.get(5).shortForecast + "\n" + forecast.get(6).name + " " + forecast.get(6).temperature + "°  " + forecast.get(6).shortForecast);
-                d3L.setWrapText(true);
-                d4L = new Label(forecast.get(7).name + " " + forecast.get(7).temperature + "°  " + forecast.get(7).shortForecast + "\n" + forecast.get(8).name + " " + forecast.get(8).temperature + "°  " + forecast.get(8).shortForecast);
-                d4L.setWrapText(true);
-                d5L = new Label(forecast.get(9).name + " " + forecast.get(9).temperature + "°  " + forecast.get(9).shortForecast + "\n" + forecast.get(10).name + " " + forecast.get(10).temperature + "°  " + forecast.get(10).shortForecast);
-                d5L.setWrapText(true);
-                d6L = new Label(forecast.get(11).name + " " + forecast.get(11).temperature + "°  " + forecast.get(11).shortForecast + "\n" + forecast.get(12).name + " " + forecast.get(12).temperature + "°  " + forecast.get(12).shortForecast);
-                d6L.setWrapText(true);
-                d7L = new Label(forecast.get(13).name + " " + forecast.get(13).temperature + "°  " + forecast.get(13).shortForecast + "\n");
-                d7L.setWrapText(true);
+            MainController controller = new MainController(forecast, weatherForecastvb);
+            controller.setDay(dayBtn, nightBtn);
+            controller.buildForecast();
+        }else{
+                curr.setText("Could not load weather");
             }
-            else {
-                d1L = new Label(forecast.get(0).name + " " + forecast.get(0).temperature + "°  " + forecast.get(0).shortForecast + "\n" + forecast.get(1).name + " " + forecast.get(1).temperature + "°  " + forecast.get(1).shortForecast);
-                d1L.setWrapText(true);
-                d2L = new Label(forecast.get(2).name + " " + forecast.get(2).temperature + "°  " + forecast.get(2).shortForecast + "\n" + forecast.get(3).name + " " + forecast.get(3).temperature + "°  " + forecast.get(3).shortForecast);
-                d2L.setWrapText(true);
-                d3L = new Label(forecast.get(4).name + " " + forecast.get(4).temperature + "°  " + forecast.get(4).shortForecast + "\n" + forecast.get(5).name + " " + forecast.get(5).temperature + "°  " + forecast.get(5).shortForecast);
-                d3L.setWrapText(true);
-                d4L = new Label(forecast.get(6).name + " " + forecast.get(6).temperature + "°  " + forecast.get(6).shortForecast + "\n" + forecast.get(7).name + " " + forecast.get(7).temperature + "°  " + forecast.get(7).shortForecast);
-                d4L.setWrapText(true);
-                d5L = new Label(forecast.get(8).name + " " + forecast.get(8).temperature + "°  " + forecast.get(8).shortForecast + "\n" + forecast.get(9).name + " " + forecast.get(9).temperature + "°  " + forecast.get(9).shortForecast);
-                d5L.setWrapText(true);
-                d6L = new Label(forecast.get(10).name + " " + forecast.get(10).temperature + "°  " + forecast.get(10).shortForecast + "\n" + forecast.get(11).name + " " + forecast.get(11).temperature + "°  " + forecast.get(11).shortForecast);
-                d6L.setWrapText(true);
-                d7L = new Label(forecast.get(12).name + " " + forecast.get(12).temperature + "°  " + forecast.get(12).shortForecast + "\n" + forecast.get(13).name + " " + forecast.get(13).temperature + "°  " + forecast.get(13).shortForecast);
-                d7L.setWrapText(true);
-            }
-        } else {
-            curr.setText("Could not load weather");
-        }
 
-        d1hb = new HBox(d1L);
-        d1hb.setPrefSize(100,75);
-        d1hb.setStyle("-fx-background-color: lightblue;-fx-border-color: black; -fx-border-width: 1;");
-        d2hb = new HBox(d2L);
-        d2hb.setStyle("-fx-background-color: lightblue;-fx-border-color: black; -fx-border-width: 1;");
-        d3hb = new HBox(d3L);
-        d3hb.setStyle("-fx-background-color: lightblue;-fx-border-color: black; -fx-border-width: 1;");
-        d4hb = new HBox(d4L);
-        d4hb.setStyle("-fx-background-color: lightblue;-fx-border-color: black; -fx-border-width: 1;");
-        d5hb = new HBox(d5L);
-        d5hb.setStyle("-fx-background-color: lightblue;-fx-border-color: black; -fx-border-width: 1;");
-        d6hb = new HBox(d6L);
-        d6hb.setStyle("-fx-background-color: lightblue;-fx-border-color: black; -fx-border-width: 1;");
-        d7hb = new HBox(d7L);
-        d7hb.setStyle("-fx-background-color: lightblue;-fx-border-color: black; -fx-border-width: 1;");
+        sevDayhb = new DayHbox(dayBtn,sevDayL, nightBtn);
+        sevDayhb.setMargin(nightBtn, new Insets(0,0,0,125));
+        sevDayhb.setPrefSize(10,10);
+
 
         hb = new HBox(settings);
         scrollPane = new ScrollPane();
         hb.setAlignment(Pos.TOP_RIGHT);
-        vb = new VBox(-10,currentWeather, curr, searchTF, searchBtn);
-        vb1 = new VBox(scrollPane);
-        vb.setMargin(currentWeather, new Insets(0,0,0,90));     //Centers the large number
-        vb.setMargin(searchBtn, new Insets(20,0,125,125));
-        vb1.setMargin(scrollPane, new Insets(-125,0,0,0));
+        sevDay = new VBox(sevDayhb,scrollPane);
+        currentDay = new VBox(dayLocvb, currentWeather, curr);
+        currentDay.setMargin(location, new Insets(0,0,0,100));
+        currentDay.setMargin(sftLab, new Insets(0,0,0,125));
+        currentDay.setMargin(curr, new Insets(-25,0,0,0));
+        vb = new VBox( currentDay, searchTF, searchBtn);
+        vb1 = new VBox(sevDay);
+        vb.setMargin(currentWeather, new Insets(-25,0,0,90));     //Centers the large number
+        vb.setMargin(searchBtn, new Insets(10,0,125,125));
+        vb1.setMargin(sevDay,new Insets(-110,0,0,0));
+        vb1.setStyle("-fx-background-color: white; -fx-background-radius: 15 15 15 15;");
         bp = new BorderPane();
+        bp.setStyle("-fx-background-color: white;");
         bp.setTop(hb);
         bp.setCenter(vb);
         bp.setPadding(new Insets(20));
         bp.setBottom(vb1);
-        weatherForecastvb = new VBox(d1hb,d2hb,d3hb,d4hb,d5hb,d6hb,d7hb);
+        scrollPane.setStyle("-fx-background-color: transparent; -fx-background-radius: 15 15 15 15;");
         scrollPane.setContent(weatherForecastvb);
-        scrollPane.setMaxHeight(400);
+        scrollPane.setMaxHeight(280);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER); scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER); scrollPane.setFitToWidth(true);
 
 
