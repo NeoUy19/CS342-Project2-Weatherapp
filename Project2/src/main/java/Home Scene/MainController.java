@@ -7,7 +7,7 @@ import javafx.scene.layout.VBox;
 public class MainController{
     private boolean isDay = true;
     private Button dayBtn;
-    private Button nightBtn;
+    private Button nightBtn, searchBtn;
     private VBox weatherForecastvb;
     private ArrayList<Period> forecast;
 
