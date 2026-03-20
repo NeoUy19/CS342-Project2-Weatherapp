@@ -1,14 +1,5 @@
-weather/Properties.class
-SettingsController.class
-MyWeatherAPI.class
-weather/Elevation.class
 DayHbox.class
-weather/Root.class
-MainController.class
-SettingsUI.class
-weather/Geometry.class
-weather/Period.class
-weather/WeatherAPI.class
-JavaFX.class
 weather/ProbabilityOfPrecipitation.class
+MainController.class
 MainUI.class
+weather/Period.class
