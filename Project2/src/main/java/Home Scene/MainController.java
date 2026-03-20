@@ -35,44 +35,44 @@ public class MainController{
         if (forecast.get(0).name.contains("night")){
             if(isDay()) { //day is clicked
                 weatherForecastvb.getChildren().addAll(
-                        new DayHbox(forecast.get(1)),
-                new DayHbox(forecast.get(3)),
-                new DayHbox(forecast.get(5)),
-                new DayHbox(forecast.get(7)),
-                new DayHbox(forecast.get(8)),
-                new DayHbox(forecast.get(11)),
-                new DayHbox(forecast.get(13)));
+                        new DayHbox(forecast.get(1),this),
+                new DayHbox(forecast.get(3), this),
+                new DayHbox(forecast.get(5), this),
+                new DayHbox(forecast.get(7), this),
+                new DayHbox(forecast.get(8), this),
+                new DayHbox(forecast.get(11), this),
+                new DayHbox(forecast.get(13), this));
             }
             else{
                 weatherForecastvb.getChildren().addAll(
-                        new DayHbox(forecast.get(2)),
-                new DayHbox(forecast.get(4)),
-                new DayHbox(forecast.get(6)),
-                new DayHbox(forecast.get(8)),
-                new DayHbox(forecast.get(10)),
-                new DayHbox(forecast.get(12)));
+                        new DayHbox(forecast.get(2), this),
+                new DayHbox(forecast.get(4), this),
+                new DayHbox(forecast.get(6), this),
+                new DayHbox(forecast.get(8), this),
+                new DayHbox(forecast.get(10), this),
+                new DayHbox(forecast.get(12), this));
             }
         }
         else {
             if (isDay()) {
                 weatherForecastvb.getChildren().addAll(
-                  new DayHbox(forecast.get(0)),
-                new DayHbox(forecast.get(2)),
-                new DayHbox(forecast.get(4)),
-                new DayHbox(forecast.get(6)),
-                new DayHbox(forecast.get(8)),
-                new DayHbox(forecast.get(10)),
-                new DayHbox(forecast.get(12)));
+                  new DayHbox(forecast.get(0), this),
+                new DayHbox(forecast.get(2), this),
+                new DayHbox(forecast.get(4), this),
+                new DayHbox(forecast.get(6), this),
+                new DayHbox(forecast.get(8), this),
+                new DayHbox(forecast.get(10), this),
+                new DayHbox(forecast.get(12), this));
             }
             else {
                 weatherForecastvb.getChildren().addAll(
-                          new DayHbox(forecast.get(1)),
-                        new DayHbox(forecast.get(3)),
-                        new DayHbox(forecast.get(5)),
-                        new DayHbox(forecast.get(7)),
-                        new DayHbox(forecast.get(8)),
-                        new DayHbox(forecast.get(11)),
-                        new DayHbox(forecast.get(13)));
+                          new DayHbox(forecast.get(1), this),
+                        new DayHbox(forecast.get(3), this),
+                        new DayHbox(forecast.get(5), this),
+                        new DayHbox(forecast.get(7), this),
+                        new DayHbox(forecast.get(8), this),
+                        new DayHbox(forecast.get(11), this),
+                        new DayHbox(forecast.get(13), this));
             }
         }
     }
