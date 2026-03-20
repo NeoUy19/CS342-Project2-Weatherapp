@@ -26,15 +26,16 @@ public class MainUI{
     private TextField searchTF;
     private Label currentWeather, location, curr, sevDayL, sftLab;
     private ScrollPane scrollPane;
+    private ComboBox<String> cityDropdown;
 
-    public Scene buildHome(Stage primaryStage){
+    public Scene buildHome(){
         //searchTF = new TextField();     //Declared TextField
         //searchTF.setPromptText("Where to?");
-        ComboBox<String> cityDropdown = new ComboBox<>();
+        backbtn = new Button();
+        cityDropdown = new ComboBox<>();
         searchBtn = new Button("Search");
         cityDropdown.setPromptText("Select a city to see");
         cityDropdown.getItems().addAll("San Francisco, CA", "New York, NY", "Austin, TX");
-        searchCity(searchBtn, cityDropdown, primaryStage);
         settings = new Button("Settings");
         sevDayL = new Label("7-DAY FORECAST");
         sevDayL.setStyle("-fx-font-size: 15px; -fx-font-family: 'Georgia';");
@@ -168,6 +169,7 @@ public class MainUI{
     public Scene buildNYC(){
 //        ComboBox<String> cityDropdown = new ComboBox<>();
 //        searchBtn = new Button("Search");
+        backbtn = new Button("Back");
         settings = new Button("Settings");
         sevDayL = new Label("7-DAY FORECAST");
         sevDayL.setStyle("-fx-font-size: 15px; -fx-font-family: 'Georgia';");
@@ -182,7 +184,7 @@ public class MainUI{
             String nameStr = today.name;
             currentWeather = new Label(today.temperature + "°  \n");
             location = new Label("New York City");
-            sftLab = new Label("" + today.name);
+            sftLab = new Label("" + nameStr);
             location.setStyle("-fx-font-size: 25px; -fx-font-family: 'Georgia';");
             dayLocvb = new VBox (location, sftLab);
             curr.setText(forecast.get(0).shortForecast);
@@ -201,7 +203,7 @@ public class MainUI{
         sevDayhb.setPrefSize(10,10);
 
 
-        hb = new HBox(settings);
+        hb = new HBox(backbtn,settings);
         scrollPane = new ScrollPane();
         hb.setAlignment(Pos.TOP_RIGHT);
         sevDay = new VBox(sevDayhb,scrollPane);
@@ -230,19 +232,18 @@ public class MainUI{
     }
 
 
-    public void searchCity(Button searchBtn, ComboBox<String> cityDropdown, Stage primaryStage){
+    public void searchCity(Stage primaryStage, Scene homeScene,Button searchBtn, ComboBox<String> cityDropdown){
         this.searchBtn = searchBtn;
-        searchBtn.setOnAction(e -> {
+        searchBtn.setOnAction(e->{
             String selectedCity = cityDropdown.getValue();
                 if (selectedCity != null) {
                     if (selectedCity.contains("San Francisco, CA")) {
-                        Scene sFscene = buildSF();
-                        primaryStage.setScene(sFscene);
+                        primaryStage.setScene(buildSF());
+                        backbtn.setOnAction(t -> primaryStage.setScene(homeScene));
                     } else if (selectedCity.contains("New York, NY")) {
-                        Scene nycScene = buildNYC();
-                        primaryStage.setScene(nycScene);
+                        primaryStage.setScene(buildNYC());
+                        backbtn.setOnAction(t->primaryStage.setScene(homeScene));
                     }
-
                 } else {
                     cityDropdown.setPromptText("Select a city to see");
                 }
@@ -253,4 +254,6 @@ public class MainUI{
     public Label getCurr(){return curr;}
     public TextField getSearchTF(){return searchTF;}
     public Button getBackbtn() {return backbtn;}
+    public Button getSearchBtn() {return searchBtn;}
+    public ComboBox<String> getCityDropdown(){return cityDropdown;}
 }

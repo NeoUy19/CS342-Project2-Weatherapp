@@ -23,8 +23,9 @@ public class JavaFX extends Application {
 		primaryStage.setTitle("A&N Weather");
 
 		MainUI home = new MainUI();
-		Scene scene = home.buildHome(primaryStage);
+		Scene scene = home.buildHome();
 
+		home.searchCity(primaryStage, scene,home.getSearchBtn(), home.getCityDropdown());
 		SettingsUI settings = new SettingsUI();
 		Scene settingsPage = settings.buildSettings();
 
