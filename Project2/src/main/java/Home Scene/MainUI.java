@@ -13,7 +13,8 @@ import javafx.scene.text.Font;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.ScrollPane;
-
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import weather.Period;
 import weather.WeatherAPI;
 
@@ -29,18 +30,28 @@ public class MainUI{
     private ComboBox<String> cityDropdown;
 
     public Scene buildHome(){
-        //searchTF = new TextField();     //Declared TextField
-        //searchTF.setPromptText("Where to?");
-        backbtn = new Button();
         cityDropdown = new ComboBox<>();
-        searchBtn = new Button("Search");
         cityDropdown.setPromptText("Select a city to see");
         cityDropdown.getItems().addAll("San Francisco, CA", "New York, NY", "Austin, TX");
-        settings = new Button("Settings");
         sevDayL = new Label("7-DAY FORECAST");
-        sevDayL.setStyle("-fx-font-size: 15px; -fx-font-family: 'Georgia';");
-        dayBtn = new Button("Day");
-        nightBtn = new Button ("Night");
+        sevDayL.setStyle("-fx-font-size: 13px; -fx-font-family: 'Georgia';");
+
+        ImageView dayIcon = new ImageView(new Image(getClass().getResourceAsStream("/images/sunny.png")));
+        dayIcon.setFitWidth(25);
+        dayIcon.setFitHeight(25);
+        dayIcon.setPreserveRatio(true);
+        ImageView nightIcon = new ImageView(new Image(getClass().getResourceAsStream("/images/clearNight.png")));
+        nightIcon.setFitWidth(25);
+        nightIcon.setFitHeight(25);
+        nightIcon.setPreserveRatio(true);
+
+
+        dayBtn = new Button();
+        dayBtn.setGraphic(dayIcon);
+        dayBtn.setStyle("-fx-background-color: transparent;");
+        nightBtn = new Button ();
+        nightBtn.setGraphic(nightIcon);
+        nightBtn.setStyle("-fx-background-color: transparent;");
         weatherForecastvb = new VBox();
         ArrayList<Period> forecast = WeatherAPI.getForecast("LOT", 77, 70);
 
@@ -66,11 +77,11 @@ public class MainUI{
             }
 
         sevDayhb = new DayHbox(dayBtn,sevDayL, nightBtn);
-        sevDayhb.setMargin(nightBtn, new Insets(0,0,0,125));
+        sevDayhb.setMargin(nightBtn, new Insets(0,0,0,115));
         sevDayhb.setPrefSize(10,10);
 
 
-        hb = new HBox(settings);
+        hb = new HBox(cityDropdown);
         scrollPane = new ScrollPane();
         hb.setAlignment(Pos.TOP_RIGHT);
         sevDay = new VBox(sevDayhb,scrollPane);
@@ -78,11 +89,10 @@ public class MainUI{
         currentDay.setMargin(location, new Insets(0,0,0,100));
         currentDay.setMargin(sftLab, new Insets(0,0,0,125));
         currentDay.setMargin(curr, new Insets(-25,0,0,0));
-        //vb = new VBox( currentDay, searchTF, searchBtn);
-        vb = new VBox( currentDay, cityDropdown, searchBtn);
+        vb = new VBox(currentDay);
         vb1 = new VBox(sevDay);
         vb.setMargin(currentWeather, new Insets(-25,0,0,90));     //Centers the large number
-        vb.setMargin(searchBtn, new Insets(10,0,125,125));
+//        vb.setMargin(searchBtn, new Insets(10,0,125,125));
         vb1.setMargin(sevDay,new Insets(-110,0,0,0));
         vb1.setStyle("-fx-background-color: white; -fx-background-radius: 15 15 15 15;");
         bp = new BorderPane();
@@ -100,7 +110,10 @@ public class MainUI{
     }
 
     public Scene buildSF(){
-        backbtn = new Button("Back");
+        cityDropdown = new ComboBox<>();
+        cityDropdown.setPromptText("Select a city to see");
+        cityDropdown.getItems().addAll("Chicago, IL", "New York, NY", "Austin, TX");
+
         settings = new Button("Settings");
         sevDayL = new Label("7-DAY FORECAST");
         sevDayL.setStyle("-fx-font-size: 15px; -fx-font-family: 'Georgia';");
@@ -131,10 +144,10 @@ public class MainUI{
         }
 
         sevDayhb = new DayHbox(dayBtn,sevDayL, nightBtn);
-        sevDayhb.setMargin(nightBtn, new Insets(0,0,0,125));
+        sevDayhb.setMargin(nightBtn, new Insets(0,0,0,75));
         sevDayhb.setPrefSize(10,10);
 
-        hb = new HBox(backbtn, settings);
+        hb = new HBox(cityDropdown);
         scrollPane = new ScrollPane();
         hb.setAlignment(Pos.TOP_RIGHT);
         sevDay = new VBox(sevDayhb,scrollPane);
@@ -145,7 +158,7 @@ public class MainUI{
         vb = new VBox(currentDay);
         vb1 = new VBox(sevDay);
         vb.setMargin(currentWeather, new Insets(-25,0,0,90));     //Centers the large number
-        vb.setMargin(searchBtn, new Insets(10,0,125,125));
+//        vb.setMargin(searchBtn, new Insets(10,0,125,125));
         vb1.setMargin(sevDay,new Insets(-110,0,0,0));
         vb1.setStyle("-fx-background-color: white; -fx-background-radius: 15 15 15 15;");
         bp = new BorderPane();
@@ -163,7 +176,9 @@ public class MainUI{
     }
 
     public Scene buildNYC(){
-        backbtn = new Button("Back");
+        cityDropdown = new ComboBox<>();
+        cityDropdown.setPromptText("Select a city to see");
+        cityDropdown.getItems().addAll("San Francisco, CA", "Austin, TX", "Chicago, IL");
         settings = new Button("Settings");
         sevDayL = new Label("7-DAY FORECAST");
         sevDayL.setStyle("-fx-font-size: 15px; -fx-font-family: 'Georgia';");
@@ -197,7 +212,7 @@ public class MainUI{
         sevDayhb.setPrefSize(10,10);
 
 
-        hb = new HBox(backbtn,settings);
+        hb = new HBox(cityDropdown);
         scrollPane = new ScrollPane();
         hb.setAlignment(Pos.TOP_RIGHT);
         sevDay = new VBox(sevDayhb,scrollPane);
@@ -208,7 +223,7 @@ public class MainUI{
         vb = new VBox(currentDay);
         vb1 = new VBox(sevDay);
         vb.setMargin(currentWeather, new Insets(-25,0,0,90));     //Centers the large number
-        vb.setMargin(searchBtn, new Insets(10,0,125,125));
+//        vb.setMargin(searchBtn, new Insets(10,0,125,125));
         vb1.setMargin(sevDay,new Insets(-110,0,0,0));
         vb1.setStyle("-fx-background-color: white; -fx-background-radius: 15 15 15 15;");
         bp = new BorderPane();
@@ -225,7 +240,9 @@ public class MainUI{
         return new Scene(bp,360,640);
     }
     public Scene buildAustin(){
-        backbtn = new Button("Back");
+        cityDropdown = new ComboBox<>();
+        cityDropdown.setPromptText("Select a city to see");
+        cityDropdown.getItems().addAll("San Francisco, CA", "New York, NY", "Chicago, IL");
         settings = new Button("Settings");
         sevDayL = new Label("7-DAY FORECAST");
         sevDayL.setStyle("-fx-font-size: 15px; -fx-font-family: 'Georgia';");
@@ -258,7 +275,7 @@ public class MainUI{
         sevDayhb.setMargin(nightBtn, new Insets(0,0,0,125));
         sevDayhb.setPrefSize(10,10);
 
-        hb = new HBox(backbtn, settings);
+        hb = new HBox(cityDropdown);
         scrollPane = new ScrollPane();
         hb.setAlignment(Pos.TOP_RIGHT);
         sevDay = new VBox(sevDayhb,scrollPane);
@@ -269,7 +286,7 @@ public class MainUI{
         vb = new VBox(currentDay);
         vb1 = new VBox(sevDay);
         vb.setMargin(currentWeather, new Insets(-25,0,0,90));     //Centers the large number
-        vb.setMargin(searchBtn, new Insets(10,0,125,125));
+//        vb.setMargin(searchBtn, new Insets(10,0,125,125));
         vb1.setMargin(sevDay,new Insets(-110,0,0,0));
         vb1.setStyle("-fx-background-color: white; -fx-background-radius: 15 15 15 15;");
         bp = new BorderPane();
@@ -287,31 +304,34 @@ public class MainUI{
     }
 
 
-    public void searchCity(Stage primaryStage, Scene homeScene,Button searchBtn, ComboBox<String> cityDropdown){
-        this.searchBtn = searchBtn;
-        searchBtn.setOnAction(e->{
-            String selectedCity = cityDropdown.getValue();
-                if (selectedCity != null) {
-                    if (selectedCity.contains("San Francisco, CA")) {
-                        primaryStage.setScene(buildSF());
-                        backbtn.setOnAction(t -> primaryStage.setScene(homeScene));
-                    } else if (selectedCity.contains("New York, NY")) {
-                        primaryStage.setScene(buildNYC());
-                        backbtn.setOnAction(t->primaryStage.setScene(homeScene));
-                    }else if (selectedCity.contains("Austin, TX")) {
-                        primaryStage.setScene(buildAustin());
-                        backbtn.setOnAction(t->primaryStage.setScene(homeScene));
+    public void searchCity(Stage primaryStage, Scene homeScene, ComboBox<String> cityDropdown,
+                           Scene chi, Scene sf, Scene ny, Scene aus,
+                           MainUI Chi, MainUI SanF, MainUI NewY, MainUI Aus){
+        cityDropdown.valueProperty().addListener((oberservable, oldValue, newValue)-> {
+                if (newValue != null) {
+                    if (newValue.contains("San Francisco, CA")){
+                        primaryStage.setScene(sf);
+                        SanF.getCityDropdown().setValue(null);
+                        SanF.getCityDropdown().setPromptText("Select a city to see");
+                    }else if(newValue.contains("New York, NY")){
+                primaryStage.setScene(ny);
+                NewY.getCityDropdown().setValue(null);
+                NewY.getCityDropdown().setPromptText("Select a city to see");
+            } else if (newValue.contains("Austin, TX")){
+                primaryStage.setScene(aus);
+                Aus.getCityDropdown().setValue(null);
+                Aus.getCityDropdown().setPromptText("Select a city to see");
+            }else if (newValue.contains("Chicago, IL")){
+                        primaryStage.setScene(chi);
+                        Chi.getCityDropdown().setValue(null);
+                        Chi.getCityDropdown().setPromptText("Select a city to see");
                     }
-                } else {
-                    cityDropdown.setPromptText("Select a city to see");
-                }
-        });
+        }});
     }
 
     public Button getSettings(){return settings;}
     public Label getCurr(){return curr;}
     public TextField getSearchTF(){return searchTF;}
     public Button getBackbtn() {return backbtn;}
-    public Button getSearchBtn() {return searchBtn;}
     public ComboBox<String> getCityDropdown(){return cityDropdown;}
 }

@@ -22,20 +22,24 @@ public class JavaFX extends Application {
 	public void start(Stage primaryStage) throws Exception {
 		primaryStage.setTitle("A&N Weather");
 
-		MainUI home = new MainUI();
-		Scene scene = home.buildHome();
+		MainUI Chi = new MainUI();
+		MainUI SanF = new MainUI();
+		MainUI NewY = new MainUI();
+		MainUI Aus = new MainUI();
+		Scene Chicago = Chi.buildHome();
+		Scene SF = SanF.buildSF();
+		Scene NY = NewY.buildNYC();
+		Scene Austin = Aus.buildAustin();
 
-		home.searchCity(primaryStage, scene,home.getSearchBtn(), home.getCityDropdown());
+		Chi.searchCity(primaryStage, Chicago, Chi.getCityDropdown(), Chicago, SF, NY, Austin, Chi, SanF, NewY, Aus);
+		SanF.searchCity(primaryStage, SF, SanF.getCityDropdown(), Chicago, SF, NY, Austin, Chi, SanF, NewY, Aus);
+		NewY.searchCity(primaryStage, NY, NewY.getCityDropdown(), Chicago, SF, NY, Austin, Chi, SanF, NewY, Aus);
+		Aus.searchCity(primaryStage, Austin, Aus.getCityDropdown(), Chicago, SF, NY, Austin, Chi, SanF, NewY, Aus);
+
 		SettingsUI settings = new SettingsUI();
 		Scene settingsPage = settings.buildSettings();
 
-		home.getSettings().setOnAction(e->{
-			primaryStage.setScene(settingsPage);
-		});
-		settings.getReturnButt().setOnAction(e->{
-			primaryStage.setScene(scene);
-		});
-		primaryStage.setScene(scene);
+		primaryStage.setScene(Chicago);
 		primaryStage.setResizable(false);
 		primaryStage.show();
 	}
