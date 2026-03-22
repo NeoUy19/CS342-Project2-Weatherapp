@@ -3,6 +3,9 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import weather.Period;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.layout.AnchorPane;
 import weather.WeatherAPI;
 import javafx.scene.control.Button;
 public class DayHbox extends HBox{
@@ -12,14 +15,24 @@ public class DayHbox extends HBox{
         Label label = new Label (
                 time.name + " " + time.temperature + "° \n" + time.shortForecast + "\n" + "Wind Speed: " + time.windSpeed + " " + time.windDirection
         );
-        label.setStyle("-fx-font-size: 15px; -fx-font-family: 'Georgia';");
+        label.setStyle("-fx-font-size: 12px; -fx-font-family: 'Georgia'; -fx-text-fill: white;");
         label.setWrapText(true);
 
         ImageView icon = getWeatherIcon(time.shortForecast);
-        getChildren().addAll(label, icon);
-        setPrefSize(75,75);
-        setStyle("-fx-background-color: lightblue;" +
-                " -fx-border-color: white;" +
+        AnchorPane iconPane = new AnchorPane(icon);
+        iconPane.setPrefWidth(50);
+        iconPane.setMinWidth(50);
+        iconPane.setMaxWidth(50);
+        AnchorPane.setRightAnchor(icon, 5.0);
+        AnchorPane.setTopAnchor(icon, 15.0);
+        label.setMaxWidth(225);
+        label.setMinWidth(225);
+        setMaxHeight(Double.MAX_VALUE);
+        getChildren().addAll(label, iconPane);
+        setPrefSize(360,75);
+        setPadding(new Insets (5,5,5,5));
+        setStyle("-fx-background-color: rgba(255,255,255,0.15);" +
+                " -fx-border-color: rgba(255,255,255,0.4);" +
                 " -fx-border-width: 1;" +
                 "-fx-border-radius: 15 15 15 15;" +
                 " -fx-background-radius: 15 15 15 15;");
@@ -27,12 +40,14 @@ public class DayHbox extends HBox{
 
     public DayHbox(Button dayBtn, Label label, Button nightBtn){
         getChildren().addAll(dayBtn, label, nightBtn);
-        setPrefSize(75,75);
-        setStyle("-fx-background-color: lightblue;" +
-                " -fx-border-color: white;" +
-                " -fx-border-width: 1;" +
-                "-fx-border-radius: 15 15 15 15;" +
-                " -fx-background-radius: 15 15 15 15;");
+        setPrefSize(360, 50);
+        setAlignment(Pos.CENTER);
+        setSpacing(10);
+        setStyle("-fx-background-color: rgba(255,255,255,0.15);" +
+                " -fx-border-color: rgba(255,255,255,0.4);" +
+                " -fx-border-width: 1px;" +
+                " -fx-border-radius: 15;" +
+                " -fx-background-radius: 15;");
     }
     private ImageView getWeatherIcon(String shortForecast){
         String forecast = shortForecast.toLowerCase();
@@ -67,9 +82,9 @@ public class DayHbox extends HBox{
             }
         } else if (forecast.contains("cloudy")) {
             if (isDay) {
-                imagePath = "/images/cloudyMain.png";
+                imagePath = "/images/cloudy.png";
             } else {
-                imagePath = "/images/cloudyNight.png";
+                imagePath = "/images/cloudy.png";
             }
         } else if (forecast.contains("fog") || forecast.contains("haze")) {
             imagePath = "/images/hazefog.png";
@@ -82,12 +97,12 @@ public class DayHbox extends HBox{
                 imagePath = "/images/clearNight.png";
             }
         } else {
-            imagePath = "/images/sunny.png"; // fallback
+            imagePath = "/images/sunny.png";
         }
 
         ImageView imageView = new ImageView(new Image(getClass().getResourceAsStream(imagePath)));
-        imageView.setFitWidth(40);
-        imageView.setFitHeight(40);
+        imageView.setFitWidth(30);
+        imageView.setFitHeight(30);
         imageView.setPreserveRatio(true);
         return imageView;
     }

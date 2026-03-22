@@ -11,11 +11,14 @@ public class MainController{
     private VBox weatherForecastvb;
     private ArrayList<Period> forecast;
 
+    private final int sunrise = 7;
+    private final int sunset = 19;
 
     public MainController(ArrayList<Period> forecast, VBox weatherForecastvb) {
         this.forecast = forecast;
         this.weatherForecastvb = weatherForecastvb;
     }
+
     public void setDay(Button dayBtn, Button nightBtn) {
         this.dayBtn = dayBtn;
         this.nightBtn = nightBtn;
@@ -75,6 +78,69 @@ public class MainController{
                         new DayHbox(forecast.get(13), this));
             }
         }
+    }
+
+    public String getBackground(String hourlyShortForecast, int hourlyIsDay){
+        String hourlyShort =  hourlyShortForecast.toLowerCase();
+            if (hourlyShort.contains("thunder") || hourlyShort.contains("storm")) {
+                return "-fx-background-color: linear-gradient(to bottom, #1c1c2e, #2d2d44);";
+            }
+            if (hourlyShort.contains("heavy rain") || hourlyShort.contains("heavy shower")) {
+                if (hourlyIsDay > sunrise  &&  hourlyIsDay < sunset) {
+                    return "-fx-background-color: linear-gradient(to bottom, #3a4a5c, #5a6a7c);";
+                } else {
+                    return "-fx-background-color: linear-gradient(to bottom, #1a2a3a, #2a3a4a);";
+                }
+            }
+            if (hourlyShort.contains("light rain") || hourlyShort.contains("drizzle") || hourlyShort.contains("light shower")) {
+                return "-fx-background-color: linear-gradient(to bottom, #4a5a6a, #6a7a8a);";
+            }
+            if (hourlyShort.contains("rain") || hourlyShort.contains("shower")) {
+                return "-fx-background-color: linear-gradient(to bottom, #3a4a5c, #5a6a7c);";
+            }
+            if (hourlyShort.contains("snow") || hourlyShort.contains("flurries")) {
+                if (hourlyIsDay > sunrise  &&  hourlyIsDay < sunset) {
+                    return "-fx-background-color: linear-gradient(to bottom, #a8c0cc, #d0e4f0);";
+                } else {
+                    return "-fx-background-color: linear-gradient(to bottom, #2a3a4a, #4a5a6a);";
+                }
+            }
+            if (hourlyShort.contains("partly cloudy") || hourlyShort.contains("partly sunny")) {
+                if (hourlyIsDay > sunrise  &&  hourlyIsDay < sunset) {
+                    return "-fx-background-color: linear-gradient(to bottom, #4A90D9, #87CEEB);";
+                } else {
+                    return "-fx-background-color: linear-gradient(to bottom, #1a2a3a, #2a3a4a);";
+                }
+            }
+            if (hourlyShort.contains("cloudy")) {
+                if (hourlyIsDay > sunrise  &&  hourlyIsDay < sunset) {
+                    return "-fx-background-color: linear-gradient(to bottom, #6a7a8a, #9aaaba);";
+                } else {
+                    return "-fx-background-color: linear-gradient(to bottom, #2a2a3a, #3a3a4a);";
+                }
+            }
+            if (hourlyShort.contains("fog") || hourlyShort.contains("haze")) {
+                return "-fx-background-color: linear-gradient(to bottom, #8a9aaa, #aabaca);";
+            }
+            if (hourlyShort.contains("wind") || hourlyShort.contains("breezy")) {
+                if (hourlyIsDay > sunrise  &&  hourlyIsDay < sunset) {
+                    return "-fx-background-color: linear-gradient(to bottom, #4A90D9, #87CEEB);";
+                } else {
+                    return "-fx-background-color: linear-gradient(to bottom, #0d1b2a, #1b2a3b);";
+                }
+            }
+            if (hourlyShort.contains("sunny") || hourlyShort.contains("clear")) {
+                if (hourlyIsDay > sunrise  &&  hourlyIsDay < sunset) {
+                    return "-fx-background-color: linear-gradient(to bottom, #2980b9, #6dd5fa);";
+                } else {
+                    return "-fx-background-color: linear-gradient(to bottom, #0d1b2a, #1b2a3b);";
+                }
+            }
+            if (hourlyIsDay > sunrise  &&  hourlyIsDay < sunset) {
+                return "-fx-background-color: linear-gradient(to bottom, #4A90D9, #87CEEB);";
+            } else {
+                return "-fx-background-color: linear-gradient(to bottom, #0d1b2a, #1b2a3b);";
+            }
     }
 
     public boolean isDay() {return isDay;}

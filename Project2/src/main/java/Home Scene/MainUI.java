@@ -13,52 +13,147 @@ import javafx.scene.text.Font;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.ScrollPane;
-
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import weather.Period;
 import weather.WeatherAPI;
+import javafx.scene.control.MenuButton;
+import javafx.scene.control.MenuItem;
 
 import java.util.ArrayList;
 public class MainUI{
-    private VBox vb, vb1, weatherForecastvb, currentDay, sevDay, dayLocvb;                //Declared variables
-    private HBox hb,hb2,sevDayhb;
+    private VBox vb, vb1, weatherForecastvb, currentDay, sevDay, dayLocvb, hourVB;                //Declared variables
+    private HBox hb,hb2,sevDayhb, hourHB, hourlyHB;
     private Button settings, searchBtn, dayBtn, nightBtn, backbtn;
     private BorderPane bp, bp2;
-    private TextField searchTF;
-    private Label currentWeather, location, curr, sevDayL, sftLab;
-    private ScrollPane scrollPane;
-    private ComboBox<String> cityDropdown;
+    private Label currentWeather, location, curr, sevDayL, sftLab, hourTemp, hourTime;
+    private ScrollPane scrollPane, hourScroll;
+    private MenuButton cityDropdown;
+    private ImageView hourIcons;
+
+    private final int sunrise = 7;
+    private final int sunset = 19;
 
     public Scene buildHome(){
-        //searchTF = new TextField();     //Declared TextField
-        //searchTF.setPromptText("Where to?");
-        backbtn = new Button();
-        cityDropdown = new ComboBox<>();
-        searchBtn = new Button("Search");
-        cityDropdown.setPromptText("Select a city to see");
-        cityDropdown.getItems().addAll("San Francisco, CA", "New York, NY", "Austin, TX");
-        settings = new Button("Settings");
+        cityDropdown = dropdownMenu(new String[]{"San Francisco, CA", "New York, NY", "Austin, TX"});
         sevDayL = new Label("7-DAY FORECAST");
-        sevDayL.setStyle("-fx-font-size: 15px; -fx-font-family: 'Georgia';");
-        dayBtn = new Button("Day");
-        nightBtn = new Button ("Night");
+        sevDayL.setStyle("-fx-font-size: 13px; -fx-font-family: 'Georgia'; -fx-text-fill: white;");
+        ImageView dayIcon = new ImageView(new Image(getClass().getResourceAsStream("/images/sunny.png")));
+        dayIcon.setFitWidth(25);
+        dayIcon.setFitHeight(25);
+        dayIcon.setPreserveRatio(true);
+        ImageView nightIcon = new ImageView(new Image(getClass().getResourceAsStream("/images/clearNight.png")));
+        nightIcon.setFitWidth(25);
+        nightIcon.setFitHeight(25);
+        nightIcon.setPreserveRatio(true);
+
+
+        dayBtn = new Button();
+        dayBtn.setGraphic(dayIcon);
+        dayBtn.setStyle("-fx-background-color: transparent;");
+        nightBtn = new Button ();
+        nightBtn.setGraphic(nightIcon);
+        nightBtn.setStyle("-fx-background-color: transparent;");
         weatherForecastvb = new VBox();
+        weatherForecastvb.setSpacing(8);
         ArrayList<Period> forecast = WeatherAPI.getForecast("LOT", 77, 70);
+        ArrayList<Period> hourlyForecast = MyWeatherAPI.getHourlyForecast("LOT", 77, 70);
+        ScrollPane hourScroll = new ScrollPane();
+        if (hourlyForecast != null) {
+            HBox hourHbox = new HBox(20);
+            for(int i = 0 ; i < 24; i++) {
+                Period hour = hourlyForecast.get(i);
+                Label hourTemp = new Label (hour.temperature + "°");
+                hourTemp.setStyle("-fx-text-fill: white;");
 
+                Label hourTime;
+                if (i == 0){
+                    hourTime = new Label("Current");
 
-        curr = new Label();
+                }
+                else {
+                    hourTime = new Label(hour.startTime.toString().substring(11,13));
+                }
+                hourTime.setStyle("-fx-text-fill: white;");
+
+                String hourlyShortForecast = hour.shortForecast.toLowerCase();
+                String imagePath;
+                if (hourlyShortForecast.contains("thunder")) {
+                    imagePath = "/images/thunder.png";
+                } else if (hourlyShortForecast.contains("storm")) {
+                    imagePath = "/images/storm.png";
+                } else if (hourlyShortForecast.contains("heavy rain") || hourlyShortForecast.contains("heavy shower")) {
+                    if ( Integer.valueOf(hour.startTime.toString().substring(11,13)) < sunset && Integer.valueOf(hour.startTime.toString().substring(11,13)) >= sunrise) {
+                        imagePath = "/images/heavy-rain.png";
+                    } else {
+                        imagePath = "/images/nightHeavyRain.png";
+                    }
+                } else if (hourlyShortForecast.contains("light rain") || hourlyShortForecast.contains("drizzle") || hourlyShortForecast.contains("light shower")) {
+                    imagePath = "/images/light-rain.png";
+                } else if (hourlyShortForecast.contains("rain") || hourlyShortForecast.contains("shower")) {
+                    imagePath = "/images/rain.png";
+                } else if (hourlyShortForecast.contains("snow") || hourlyShortForecast.contains("flurries")) {
+                    if ( Integer.valueOf(hour.startTime.toString().substring(11,13)) < sunset && Integer.valueOf(hour.startTime.toString().substring(11,13)) >= sunrise) {
+                        imagePath = "/images/snowDay.png";
+                    } else {
+                        imagePath = "/images/snowNight.png";
+                    }
+                } else if (hourlyShortForecast.contains("partly cloudy") || hourlyShortForecast.contains("partly sunny")) {
+                    if (  Integer.valueOf(hour.startTime.toString().substring(11,13)) < sunset && Integer.valueOf(hour.startTime.toString().substring(11,13)) >= sunrise) {
+                        imagePath = "/images/partly-cloudDay.png";
+                    } else {
+                        imagePath = "/images/cloudyNight.png";
+                    }
+                } else if (hourlyShortForecast.contains("cloudy")) {
+                    if (  Integer.valueOf(hour.startTime.toString().substring(11,13)) < sunset && Integer.valueOf(hour.startTime.toString().substring(11,13)) >= sunrise) {
+                        imagePath = "/images/cloudy.png";
+                    } else {
+                        imagePath = "/images/cloudy.png";
+                    }
+                } else if (hourlyShortForecast.contains("fog") || hourlyShortForecast.contains("haze")) {
+                    imagePath = "/images/hazefog.png";
+                } else if (hourlyShortForecast.contains("wind") || hourlyShortForecast.contains("breezy")) {
+                    imagePath = "/images/windy.png";
+                } else if (hourlyShortForecast.contains("sunny") || hourlyShortForecast.contains("clear")) {
+                    if ( Integer.valueOf(hour.startTime.toString().substring(11,13)) < sunset && Integer.valueOf(hour.startTime.toString().substring(11,13)) >= sunrise) {
+                        imagePath = "/images/sunny.png";
+                    } else {
+                        imagePath = "/images/clearNight.png";
+                    }
+                } else {
+                    imagePath = "/images/sunny.png";
+                }
+
+                ImageView hourIcons = new ImageView(new Image(getClass().getResourceAsStream(imagePath)));
+                hourIcons.setFitWidth(15);
+                hourIcons.setFitHeight(15);
+                hourIcons.setPreserveRatio(true);
+                VBox hourVB = new VBox(hourTemp,hourIcons,hourTime);
+                hourVB.setAlignment(Pos.CENTER);
+                hourVB.setSpacing(4);
+                hourHbox.getChildren().add(hourVB);
+            }
+            hourScroll.setContent(hourHbox);
+            hourScroll.setStyle("-fx-background-color: transparent; -fx-background: transparent; -fx-background-radius: 10;");
+            hourScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER); hourScroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER); hourScroll.setFitToHeight(true);
+        }
+        MainController controller = new MainController(forecast, weatherForecastvb);
+
         if (forecast != null) {
-            Period today = forecast.get(0);
-            String nameStr = today.name;
-            currentWeather = new Label(today.temperature + "°  \n");
+            Period today = hourlyForecast.get(0);
+            currentWeather = new Label(today.temperature + "°");
             location = new Label("Chicago");
-            sftLab = new Label("" + today.name);
-            location.setStyle("-fx-font-size: 25px; -fx-font-family: 'Georgia';");
+            sftLab = new Label(hourlyForecast.get(0).shortForecast);
+            sftLab.setStyle("-fx-font-family: 'Georgia'; -fx-text-fill: white;");
+            location.setStyle("-fx-font-size: 25px; -fx-font-family: 'Georgia'; -fx-text-fill: white;");
+            currentWeather.setStyle("-fx-font-size: 96px; -fx-text-fill: white;");
+            currentWeather.setAlignment(Pos.CENTER);
+            currentWeather.setMaxWidth(Double.MAX_VALUE);
             dayLocvb = new VBox (location, sftLab);
-            curr.setText(forecast.get(0).shortForecast);
-            curr.setStyle("-fx-font-size: 15px; -fx-font-family: 'Georgia';");
-            currentWeather.setStyle("-fx-font-size: 96px; -fx-weight: bold;");
-            curr.setWrapText(true);
-            MainController controller = new MainController(forecast, weatherForecastvb);
+            dayLocvb.setAlignment(Pos.CENTER);
+            currentDay = new VBox(dayLocvb, currentWeather);
+            currentDay.setAlignment(Pos.CENTER);
+            currentDay.setSpacing(5);
             controller.setDay(dayBtn, nightBtn);
             controller.buildForecast();
         }else{
@@ -66,252 +161,604 @@ public class MainUI{
             }
 
         sevDayhb = new DayHbox(dayBtn,sevDayL, nightBtn);
-        sevDayhb.setMargin(nightBtn, new Insets(0,0,0,125));
-        sevDayhb.setPrefSize(10,10);
+        sevDayhb.setAlignment(Pos.CENTER);
+        sevDayhb.setPrefSize(360, 50);
 
-
-        hb = new HBox(settings);
+        hb = new HBox(cityDropdown);
+        hb.setAlignment(Pos.TOP_RIGHT);
+        hb.setStyle("-fx-background-color: rgba(0, 0, 0, 0.4);");
         scrollPane = new ScrollPane();
         hb.setAlignment(Pos.TOP_RIGHT);
-        sevDay = new VBox(sevDayhb,scrollPane);
-        currentDay = new VBox(dayLocvb, currentWeather, curr);
-        currentDay.setMargin(location, new Insets(0,0,0,100));
-        currentDay.setMargin(sftLab, new Insets(0,0,0,125));
-        currentDay.setMargin(curr, new Insets(-25,0,0,0));
-        //vb = new VBox( currentDay, searchTF, searchBtn);
-        vb = new VBox( currentDay, cityDropdown, searchBtn);
+        Label hourly = new Label("Hourly Forecast");
+        hourly.setStyle("-fx-text-fill: white; -fx-font-family: 'Georgia';");
+        Label hourForecast = new Label(hourlyForecast.get(0).shortForecast);
+        hourForecast.setStyle("-fx-text-fill: white; -fx-font-family: 'Georgia';");
+
+
+        VBox hourlyBox = new VBox(hourly, hourForecast, hourScroll);
+        hourlyBox.setSpacing(5);
+        hourlyBox.setPadding(new Insets(8, 8, 8, 8));
+        hourlyBox.setStyle("-fx-background-color: rgba(255,255,255,0.15);" +
+                " -fx-border-color: rgba(255,255,255,0.4);" +
+                " -fx-border-width: 1;" +
+                "-fx-border-radius: 15 15 15 15;" +
+                " -fx-background-radius: 15 15 15 15;");
+        sevDay = new VBox(hourlyBox,sevDayhb,scrollPane);
+        sevDay.setSpacing(5);
+        sevDay.setPadding(new Insets(10, 5, 5, 5));
+
+        vb = new VBox(currentDay);
+        vb.setAlignment(Pos.CENTER);
         vb1 = new VBox(sevDay);
-        vb.setMargin(currentWeather, new Insets(-25,0,0,90));     //Centers the large number
-        vb.setMargin(searchBtn, new Insets(10,0,125,125));
-        vb1.setMargin(sevDay,new Insets(-110,0,0,0));
-        vb1.setStyle("-fx-background-color: white; -fx-background-radius: 15 15 15 15;");
+        vb1.setStyle("-fx-background-color: transparent; -fx-background-radius: 15 15 15 15;");
         bp = new BorderPane();
-        bp.setStyle("-fx-background-color: white;");
+        int currHour = Integer.valueOf(hourlyForecast.get(0).startTime.toString().substring(11, 13));
+        bp.setStyle(controller.getBackground(hourlyForecast.get(0).shortForecast, currHour));
         bp.setTop(hb);
         bp.setCenter(vb);
-        bp.setPadding(new Insets(20));
+        vb.setMaxWidth(Double.MAX_VALUE);
+        vb.setFillWidth(true);
+        BorderPane.setAlignment(vb, Pos.CENTER);
+        BorderPane.setMargin(vb,  new Insets(20, 20, 10, 20));
+        BorderPane.setMargin(vb1, new Insets(0, 20, 20, 20));
+        BorderPane.setMargin(hb,  new Insets(0));
         bp.setBottom(vb1);
-        scrollPane.setStyle("-fx-background-color: transparent; -fx-background-radius: 15 15 15 15;");
+        scrollPane.setStyle("-fx-background-color: transparent; -fx-background: transparent;");
         scrollPane.setContent(weatherForecastvb);
-        scrollPane.setMaxHeight(280);
+        scrollPane.setMaxHeight(180);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER); scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER); scrollPane.setFitToWidth(true);
 
         return new Scene(bp,360,640);
     }
 
     public Scene buildSF(){
-        backbtn = new Button("Back");
-        settings = new Button("Settings");
+        cityDropdown = dropdownMenu(new String[]{"Chicago, IL", "New York, NY", "Austin, TX"});
         sevDayL = new Label("7-DAY FORECAST");
-        sevDayL.setStyle("-fx-font-size: 15px; -fx-font-family: 'Georgia';");
-        dayBtn = new Button("Day");
-        nightBtn = new Button ("Night");
+        sevDayL.setStyle("-fx-font-size: 13px; -fx-font-family: 'Georgia'; -fx-text-fill: white;");
+        ImageView dayIcon = new ImageView(new Image(getClass().getResourceAsStream("/images/sunny.png")));
+        dayIcon.setFitWidth(25);
+        dayIcon.setFitHeight(25);
+        dayIcon.setPreserveRatio(true);
+        ImageView nightIcon = new ImageView(new Image(getClass().getResourceAsStream("/images/clearNight.png")));
+        nightIcon.setFitWidth(25);
+        nightIcon.setFitHeight(25);
+        nightIcon.setPreserveRatio(true);
+
+        dayBtn = new Button();
+        dayBtn.setGraphic(dayIcon);
+        dayBtn.setStyle("-fx-background-color: transparent;");
+        nightBtn = new Button();
+        nightBtn.setGraphic(nightIcon);
+        nightBtn.setStyle("-fx-background-color: transparent;");
         weatherForecastvb = new VBox();
+        weatherForecastvb.setSpacing(8);
         ArrayList<Period> forecast = WeatherAPI.getForecast("MTR", 85, 105);
-
-
-        curr = new Label();
-        if (forecast != null) {
-            Period today = forecast.get(0);
-            String nameStr = today.name;
-            currentWeather = new Label(today.temperature + "°  \n");
-            location = new Label("San Francisco");
-            sftLab = new Label("" + today.name);
-            location.setStyle("-fx-font-size: 25px; -fx-font-family: 'Georgia';");
-            dayLocvb = new VBox (location, sftLab);
-            curr.setText(forecast.get(0).shortForecast);
-            curr.setStyle("-fx-font-size: 15px; -fx-font-family: 'Georgia';");
-            currentWeather.setStyle("-fx-font-size: 96px; -fx-weight: bold;");
-            curr.setWrapText(true);
-            MainController controller = new MainController(forecast, weatherForecastvb);
-            controller.setDay(dayBtn, nightBtn);
-            controller.buildForecast();
-        }else{
-            curr.setText("Could not load weather");
+        ArrayList<Period> hourlyForecast = MyWeatherAPI.getHourlyForecast("MTR", 85, 105);
+        ScrollPane hourScroll = new ScrollPane();
+        if (hourlyForecast != null) {
+            HBox hourHbox = new HBox(20);
+            for (int i = 0; i < 24; i++) {
+                Period hour = hourlyForecast.get(i);
+                Label hourTemp = new Label(hour.temperature + "°");
+                hourTemp.setStyle("-fx-text-fill: white;");
+                Label hourTime;
+                if (i == 0) {
+                    hourTime = new Label("Current");
+                } else {
+                    hourTime = new Label(hour.startTime.toString().substring(11, 13));
+                }
+                hourTime.setStyle("-fx-text-fill: white;");
+                String hourlyShortForecast = hour.shortForecast.toLowerCase();
+                String imagePath;
+                if (hourlyShortForecast.contains("thunder")) {
+                    imagePath = "/images/thunder.png";
+                } else if (hourlyShortForecast.contains("storm")) {
+                    imagePath = "/images/storm.png";
+                } else if (hourlyShortForecast.contains("heavy rain") || hourlyShortForecast.contains("heavy shower")) {
+                    if (Integer.valueOf(hour.startTime.toString().substring(11, 13)) < sunset && Integer.valueOf(hour.startTime.toString().substring(11, 13)) >= sunrise) {
+                        imagePath = "/images/heavy-rain.png";
+                    } else {
+                        imagePath = "/images/nightHeavyRain.png";
+                    }
+                } else if (hourlyShortForecast.contains("light rain") || hourlyShortForecast.contains("drizzle") || hourlyShortForecast.contains("light shower")) {
+                    imagePath = "/images/light-rain.png";
+                } else if (hourlyShortForecast.contains("rain") || hourlyShortForecast.contains("shower")) {
+                    imagePath = "/images/rain.png";
+                } else if (hourlyShortForecast.contains("snow") || hourlyShortForecast.contains("flurries")) {
+                    if (Integer.valueOf(hour.startTime.toString().substring(11, 13)) < sunset && Integer.valueOf(hour.startTime.toString().substring(11, 13)) >= sunrise) {
+                        imagePath = "/images/snowDay.png";
+                    } else {
+                        imagePath = "/images/snowNight.png";
+                    }
+                } else if (hourlyShortForecast.contains("partly cloudy") || hourlyShortForecast.contains("partly sunny")) {
+                    if (Integer.valueOf(hour.startTime.toString().substring(11, 13)) < sunset && Integer.valueOf(hour.startTime.toString().substring(11, 13)) >= sunrise) {
+                        imagePath = "/images/partly-cloudDay.png";
+                    } else {
+                        imagePath = "/images/cloudyNight.png";
+                    }
+                } else if (hourlyShortForecast.contains("cloudy")) {
+                    imagePath = "/images/cloudy.png";
+                } else if (hourlyShortForecast.contains("fog") || hourlyShortForecast.contains("haze")) {
+                    imagePath = "/images/hazefog.png";
+                } else if (hourlyShortForecast.contains("wind") || hourlyShortForecast.contains("breezy")) {
+                    imagePath = "/images/windy.png";
+                } else if (hourlyShortForecast.contains("sunny") || hourlyShortForecast.contains("clear")) {
+                    if (Integer.valueOf(hour.startTime.toString().substring(11, 13)) < sunset && Integer.valueOf(hour.startTime.toString().substring(11, 13)) >= sunrise) {
+                        imagePath = "/images/sunny.png";
+                    } else {
+                        imagePath = "/images/clearNight.png";
+                    }
+                } else {
+                    imagePath = "/images/sunny.png";
+                }
+                ImageView hourIcons = new ImageView(new Image(getClass().getResourceAsStream(imagePath)));
+                hourIcons.setFitWidth(15);
+                hourIcons.setFitHeight(15);
+                hourIcons.setPreserveRatio(true);
+                VBox hourVB = new VBox(hourTemp, hourIcons, hourTime);
+                hourVB.setAlignment(Pos.CENTER);
+                hourVB.setSpacing(4);
+                hourHbox.getChildren().add(hourVB);
+            }
+            hourScroll.setContent(hourHbox);
+            hourScroll.setStyle("-fx-background-color: transparent; -fx-background: transparent;");
+            hourScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+            hourScroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+            hourScroll.setFitToHeight(true);
         }
 
-        sevDayhb = new DayHbox(dayBtn,sevDayL, nightBtn);
-        sevDayhb.setMargin(nightBtn, new Insets(0,0,0,125));
-        sevDayhb.setPrefSize(10,10);
+        MainController controller = new MainController(forecast, weatherForecastvb);
+        if (forecast != null) {
+            Period today = hourlyForecast.get(0);
+            currentWeather = new Label(today.temperature + "°");
+            location = new Label("San Francisco");
+            sftLab = new Label(today.shortForecast);
+            sftLab.setStyle("-fx-font-family: 'Georgia'; -fx-text-fill: white;");
+            location.setStyle("-fx-font-size: 25px; -fx-font-family: 'Georgia'; -fx-text-fill: white;");
+            currentWeather.setStyle("-fx-font-size: 96px; -fx-text-fill: white;");
+            currentWeather.setAlignment(Pos.CENTER);
+            currentWeather.setMaxWidth(Double.MAX_VALUE);
+            dayLocvb = new VBox(location, sftLab);
+            dayLocvb.setAlignment(Pos.CENTER);
+            currentDay = new VBox(dayLocvb, currentWeather);
+            currentDay.setAlignment(Pos.CENTER);
+            currentDay.setSpacing(5);
+            controller.setDay(dayBtn, nightBtn);
+            controller.buildForecast();
+        } else {
+            curr = new Label("Could not load weather");
+            currentDay = new VBox(curr);
+        }
 
-        hb = new HBox(backbtn, settings);
-        scrollPane = new ScrollPane();
+        sevDayhb = new DayHbox(dayBtn, sevDayL, nightBtn);
+        sevDayhb.setAlignment(Pos.CENTER);
+        sevDayhb.setPrefSize(360, 50);
+
+        hb = new HBox(cityDropdown);
         hb.setAlignment(Pos.TOP_RIGHT);
-        sevDay = new VBox(sevDayhb,scrollPane);
-        currentDay = new VBox(dayLocvb, currentWeather, curr);
-        currentDay.setMargin(location, new Insets(0,0,0,100));
-        currentDay.setMargin(sftLab, new Insets(0,0,0,125));
-        currentDay.setMargin(curr, new Insets(-25,0,0,0));
+        hb.setStyle("-fx-background-color: rgba(0, 0, 0, 0.4);");
+        scrollPane = new ScrollPane();
+
+        Label hourly = new Label("Hourly Forecast");
+        hourly.setStyle("-fx-text-fill: white; -fx-font-family: 'Georgia';");
+        Label hourForecast = new Label(hourlyForecast.get(0).shortForecast);
+        hourForecast.setStyle("-fx-text-fill: white; -fx-font-family: 'Georgia';");
+
+        VBox hourlyBox = new VBox(hourly, hourForecast, hourScroll);
+        hourlyBox.setSpacing(5);
+        hourlyBox.setPadding(new Insets(8, 8, 8, 8));
+        hourlyBox.setStyle("-fx-background-color: rgba(255,255,255,0.15);" +
+                " -fx-border-color: rgba(255,255,255,0.4);" +
+                " -fx-border-width: 1;" +
+                "-fx-border-radius: 15 15 15 15;" +
+                " -fx-background-radius: 15 15 15 15;");
+
+        sevDay = new VBox(hourlyBox, sevDayhb, scrollPane);
+        sevDay.setSpacing(8);
+        sevDay.setPadding(new Insets(10, 5, 5, 5));
+
         vb = new VBox(currentDay);
+        vb.setAlignment(Pos.CENTER);
         vb1 = new VBox(sevDay);
-        vb.setMargin(currentWeather, new Insets(-25,0,0,90));     //Centers the large number
-        vb.setMargin(searchBtn, new Insets(10,0,125,125));
-        vb1.setMargin(sevDay,new Insets(-110,0,0,0));
-        vb1.setStyle("-fx-background-color: white; -fx-background-radius: 15 15 15 15;");
+        vb1.setStyle("-fx-background-color: transparent;");
         bp = new BorderPane();
-        bp.setStyle("-fx-background-color: white;");
+        int currHour = Integer.valueOf(hourlyForecast.get(0).startTime.toString().substring(11, 13));
+        bp.setStyle(controller.getBackground(hourlyForecast.get(0).shortForecast, currHour));
         bp.setTop(hb);
         bp.setCenter(vb);
-        bp.setPadding(new Insets(20));
+        vb.setMaxWidth(Double.MAX_VALUE);
+        vb.setFillWidth(true);
         bp.setBottom(vb1);
-        scrollPane.setStyle("-fx-background-color: transparent; -fx-background-radius: 15 15 15 15;");
+        BorderPane.setMargin(vb,  new Insets(20, 20, 10, 20));
+        BorderPane.setMargin(vb1, new Insets(0, 20, 20, 20));
+        BorderPane.setMargin(hb,  new Insets(0));
+        scrollPane.setStyle("-fx-background-color: transparent; -fx-background: transparent;");
         scrollPane.setContent(weatherForecastvb);
-        scrollPane.setMaxHeight(280);
-        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER); scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER); scrollPane.setFitToWidth(true);
-
-        return new Scene(bp,360,640);
+        scrollPane.setMaxHeight(180);        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scrollPane.setFitToWidth(true);
+        return new Scene(bp, 360, 640);
     }
 
     public Scene buildNYC(){
-        backbtn = new Button("Back");
-        settings = new Button("Settings");
+        cityDropdown = dropdownMenu(new String[]{"Chicago, IL", "San Francisco, CA", "Austin, TX"});
         sevDayL = new Label("7-DAY FORECAST");
-        sevDayL.setStyle("-fx-font-size: 15px; -fx-font-family: 'Georgia';");
-        dayBtn = new Button("Day");
-        nightBtn = new Button ("Night");
+        sevDayL.setStyle("-fx-font-size: 13px; -fx-font-family: 'Georgia'; -fx-text-fill: white;");
+        ImageView dayIcon = new ImageView(new Image(getClass().getResourceAsStream("/images/sunny.png")));
+        dayIcon.setFitWidth(25);
+        dayIcon.setFitHeight(25);
+        dayIcon.setPreserveRatio(true);
+        ImageView nightIcon = new ImageView(new Image(getClass().getResourceAsStream("/images/clearNight.png")));
+        nightIcon.setFitWidth(25);
+        nightIcon.setFitHeight(25);
+        nightIcon.setPreserveRatio(true);
+
+        dayBtn = new Button();
+        dayBtn.setGraphic(dayIcon);
+        dayBtn.setStyle("-fx-background-color: transparent;");
+        nightBtn = new Button();
+        nightBtn.setGraphic(nightIcon);
+        nightBtn.setStyle("-fx-background-color: transparent;");
         weatherForecastvb = new VBox();
+        weatherForecastvb.setSpacing(8);
         ArrayList<Period> forecast = WeatherAPI.getForecast("OKX", 33, 37);
-
-        curr = new Label();
-        if (forecast != null) {
-            Period today = forecast.get(0);
-            String nameStr = today.name;
-            currentWeather = new Label(today.temperature + "°  \n");
-            location = new Label("New York City");
-            sftLab = new Label("" + nameStr);
-            location.setStyle("-fx-font-size: 25px; -fx-font-family: 'Georgia';");
-            dayLocvb = new VBox (location, sftLab);
-            curr.setText(forecast.get(0).shortForecast);
-            curr.setStyle("-fx-font-size: 15px; -fx-font-family: 'Georgia';");
-            currentWeather.setStyle("-fx-font-size: 96px; -fx-weight: bold;");
-            curr.setWrapText(true);
-            MainController controller = new MainController(forecast, weatherForecastvb);
-            controller.setDay(dayBtn, nightBtn);
-            controller.buildForecast();
-        }else{
-            curr.setText("Could not load weather");
-        }
-
-        sevDayhb = new DayHbox(dayBtn,sevDayL, nightBtn);
-        sevDayhb.setMargin(nightBtn, new Insets(0,0,0,125));
-        sevDayhb.setPrefSize(10,10);
-
-
-        hb = new HBox(backbtn,settings);
-        scrollPane = new ScrollPane();
-        hb.setAlignment(Pos.TOP_RIGHT);
-        sevDay = new VBox(sevDayhb,scrollPane);
-        currentDay = new VBox(dayLocvb, currentWeather, curr);
-        currentDay.setMargin(location, new Insets(0,0,0,100));
-        currentDay.setMargin(sftLab, new Insets(0,0,0,125));
-        currentDay.setMargin(curr, new Insets(-25,0,0,0));
-        vb = new VBox(currentDay);
-        vb1 = new VBox(sevDay);
-        vb.setMargin(currentWeather, new Insets(-25,0,0,90));     //Centers the large number
-        vb.setMargin(searchBtn, new Insets(10,0,125,125));
-        vb1.setMargin(sevDay,new Insets(-110,0,0,0));
-        vb1.setStyle("-fx-background-color: white; -fx-background-radius: 15 15 15 15;");
-        bp = new BorderPane();
-        bp.setStyle("-fx-background-color: white;");
-        bp.setTop(hb);
-        bp.setCenter(vb);
-        bp.setPadding(new Insets(20));
-        bp.setBottom(vb1);
-        scrollPane.setStyle("-fx-background-color: transparent; -fx-background-radius: 15 15 15 15;");
-        scrollPane.setContent(weatherForecastvb);
-        scrollPane.setMaxHeight(280);
-        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER); scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER); scrollPane.setFitToWidth(true);
-
-        return new Scene(bp,360,640);
-    }
-    public Scene buildAustin(){
-        backbtn = new Button("Back");
-        settings = new Button("Settings");
-        sevDayL = new Label("7-DAY FORECAST");
-        sevDayL.setStyle("-fx-font-size: 15px; -fx-font-family: 'Georgia';");
-        dayBtn = new Button("Day");
-        nightBtn = new Button ("Night");
-        weatherForecastvb = new VBox();
-        ArrayList<Period> forecast = WeatherAPI.getForecast("EWX", 156, 90);
-
-        curr = new Label();
-        if (forecast != null) {
-            Period today = forecast.get(0);
-            String nameStr = today.name;
-            currentWeather = new Label(today.temperature + "°  \n");
-            location = new Label("Austin");
-            sftLab = new Label("" + nameStr);
-            location.setStyle("-fx-font-size: 25px; -fx-font-family: 'Georgia';");
-            dayLocvb = new VBox (location, sftLab);
-            curr.setText(forecast.get(0).shortForecast);
-            curr.setStyle("-fx-font-size: 15px; -fx-font-family: 'Georgia';");
-            currentWeather.setStyle("-fx-font-size: 96px; -fx-weight: bold;");
-            curr.setWrapText(true);
-            MainController controller = new MainController(forecast, weatherForecastvb);
-            controller.setDay(dayBtn, nightBtn);
-            controller.buildForecast();
-        }else{
-            curr.setText("Could not load weather");
-        }
-
-        sevDayhb = new DayHbox(dayBtn,sevDayL, nightBtn);
-        sevDayhb.setMargin(nightBtn, new Insets(0,0,0,125));
-        sevDayhb.setPrefSize(10,10);
-
-        hb = new HBox(backbtn, settings);
-        scrollPane = new ScrollPane();
-        hb.setAlignment(Pos.TOP_RIGHT);
-        sevDay = new VBox(sevDayhb,scrollPane);
-        currentDay = new VBox(dayLocvb, currentWeather, curr);
-        currentDay.setMargin(location, new Insets(0,0,0,100));
-        currentDay.setMargin(sftLab, new Insets(0,0,0,125));
-        currentDay.setMargin(curr, new Insets(-25,0,0,0));
-        vb = new VBox(currentDay);
-        vb1 = new VBox(sevDay);
-        vb.setMargin(currentWeather, new Insets(-25,0,0,90));     //Centers the large number
-        vb.setMargin(searchBtn, new Insets(10,0,125,125));
-        vb1.setMargin(sevDay,new Insets(-110,0,0,0));
-        vb1.setStyle("-fx-background-color: white; -fx-background-radius: 15 15 15 15;");
-        bp = new BorderPane();
-        bp.setStyle("-fx-background-color: white;");
-        bp.setTop(hb);
-        bp.setCenter(vb);
-        bp.setPadding(new Insets(20));
-        bp.setBottom(vb1);
-        scrollPane.setStyle("-fx-background-color: transparent; -fx-background-radius: 15 15 15 15;");
-        scrollPane.setContent(weatherForecastvb);
-        scrollPane.setMaxHeight(280);
-        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER); scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER); scrollPane.setFitToWidth(true);
-
-        return new Scene(bp,360,640);
-    }
-
-
-    public void searchCity(Stage primaryStage, Scene homeScene,Button searchBtn, ComboBox<String> cityDropdown){
-        this.searchBtn = searchBtn;
-        searchBtn.setOnAction(e->{
-            String selectedCity = cityDropdown.getValue();
-                if (selectedCity != null) {
-                    if (selectedCity.contains("San Francisco, CA")) {
-                        primaryStage.setScene(buildSF());
-                        backbtn.setOnAction(t -> primaryStage.setScene(homeScene));
-                    } else if (selectedCity.contains("New York, NY")) {
-                        primaryStage.setScene(buildNYC());
-                        backbtn.setOnAction(t->primaryStage.setScene(homeScene));
-                    }else if (selectedCity.contains("Austin, TX")) {
-                        primaryStage.setScene(buildAustin());
-                        backbtn.setOnAction(t->primaryStage.setScene(homeScene));
+        ArrayList<Period> hourlyForecast = MyWeatherAPI.getHourlyForecast("OKX", 33, 37);
+        ScrollPane hourScroll = new ScrollPane();
+        if (hourlyForecast != null) {
+            HBox hourHbox = new HBox(20);
+            for (int i = 0; i < 24; i++) {
+                Period hour = hourlyForecast.get(i);
+                Label hourTemp = new Label(hour.temperature + "°");
+                hourTemp.setStyle("-fx-text-fill: white;");
+                Label hourTime;
+                if (i == 0) {
+                    hourTime = new Label("Current");
+                } else {
+                    hourTime = new Label(hour.startTime.toString().substring(11, 13));
+                }
+                hourTime.setStyle("-fx-text-fill: white;");
+                String hourlyShortForecast = hour.shortForecast.toLowerCase();
+                String imagePath;
+                if (hourlyShortForecast.contains("thunder")) {
+                    imagePath = "/images/thunder.png";
+                } else if (hourlyShortForecast.contains("storm")) {
+                    imagePath = "/images/storm.png";
+                } else if (hourlyShortForecast.contains("heavy rain") || hourlyShortForecast.contains("heavy shower")) {
+                    if (Integer.valueOf(hour.startTime.toString().substring(11, 13)) < sunset && Integer.valueOf(hour.startTime.toString().substring(11, 13)) >= sunrise) {
+                        imagePath = "/images/heavy-rain.png";
+                    } else {
+                        imagePath = "/images/nightHeavyRain.png";
+                    }
+                } else if (hourlyShortForecast.contains("light rain") || hourlyShortForecast.contains("drizzle") || hourlyShortForecast.contains("light shower")) {
+                    imagePath = "/images/light-rain.png";
+                } else if (hourlyShortForecast.contains("rain") || hourlyShortForecast.contains("shower")) {
+                    imagePath = "/images/rain.png";
+                } else if (hourlyShortForecast.contains("snow") || hourlyShortForecast.contains("flurries")) {
+                    if (Integer.valueOf(hour.startTime.toString().substring(11, 13)) < sunset && Integer.valueOf(hour.startTime.toString().substring(11, 13)) >= sunrise) {
+                        imagePath = "/images/snowDay.png";
+                    } else {
+                        imagePath = "/images/snowNight.png";
+                    }
+                } else if (hourlyShortForecast.contains("partly cloudy") || hourlyShortForecast.contains("partly sunny")) {
+                    if (Integer.valueOf(hour.startTime.toString().substring(11, 13)) < sunset && Integer.valueOf(hour.startTime.toString().substring(11, 13)) >= sunrise) {
+                        imagePath = "/images/partly-cloudDay.png";
+                    } else {
+                        imagePath = "/images/cloudyNight.png";
+                    }
+                } else if (hourlyShortForecast.contains("cloudy")) {
+                    imagePath = "/images/cloudy.png";
+                } else if (hourlyShortForecast.contains("fog") || hourlyShortForecast.contains("haze")) {
+                    imagePath = "/images/hazefog.png";
+                } else if (hourlyShortForecast.contains("wind") || hourlyShortForecast.contains("breezy")) {
+                    imagePath = "/images/windy.png";
+                } else if (hourlyShortForecast.contains("sunny") || hourlyShortForecast.contains("clear")) {
+                    if (Integer.valueOf(hour.startTime.toString().substring(11, 13)) < sunset && Integer.valueOf(hour.startTime.toString().substring(11, 13)) >= sunrise) {
+                        imagePath = "/images/sunny.png";
+                    } else {
+                        imagePath = "/images/clearNight.png";
                     }
                 } else {
-                    cityDropdown.setPromptText("Select a city to see");
+                    imagePath = "/images/sunny.png";
                 }
-        });
+                ImageView hourIcons = new ImageView(new Image(getClass().getResourceAsStream(imagePath)));
+                hourIcons.setFitWidth(15);
+                hourIcons.setFitHeight(15);
+                hourIcons.setPreserveRatio(true);
+                VBox hourVB = new VBox(hourTemp, hourIcons, hourTime);
+                hourVB.setAlignment(Pos.CENTER);
+                hourVB.setSpacing(4);
+                hourHbox.getChildren().add(hourVB);
+            }
+            hourScroll.setContent(hourHbox);
+            hourScroll.setStyle("-fx-background-color: transparent; -fx-background: transparent;");
+            hourScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+            hourScroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+            hourScroll.setFitToHeight(true);
+        }
+
+        MainController controller = new MainController(forecast, weatherForecastvb);
+        if (forecast != null) {
+            Period today = hourlyForecast.get(0);
+            currentWeather = new Label(today.temperature + "°");
+            location = new Label("New York City");
+            sftLab = new Label(today.shortForecast);
+            sftLab.setStyle("-fx-font-family: 'Georgia'; -fx-text-fill: white;");
+            location.setStyle("-fx-font-size: 25px; -fx-font-family: 'Georgia'; -fx-text-fill: white;");
+            currentWeather.setStyle("-fx-font-size: 96px; -fx-text-fill: white;");
+            currentWeather.setAlignment(Pos.CENTER);
+            currentWeather.setMaxWidth(Double.MAX_VALUE);
+            dayLocvb = new VBox(location, sftLab);
+            dayLocvb.setAlignment(Pos.CENTER);
+            currentDay = new VBox(dayLocvb, currentWeather);
+            currentDay.setAlignment(Pos.CENTER);
+            currentDay.setSpacing(5);
+            controller.setDay(dayBtn, nightBtn);
+            controller.buildForecast();
+        } else {
+            curr = new Label("Could not load weather");
+            currentDay = new VBox(curr);
+        }
+
+        sevDayhb = new DayHbox(dayBtn, sevDayL, nightBtn);
+        sevDayhb.setAlignment(Pos.CENTER);
+        sevDayhb.setPrefSize(360, 50);
+
+        hb = new HBox(cityDropdown);
+        hb.setAlignment(Pos.TOP_RIGHT);
+        hb.setStyle("-fx-background-color: rgba(0, 0, 0, 0.4);");
+        scrollPane = new ScrollPane();
+
+        Label hourly = new Label("Hourly Forecast");
+        hourly.setStyle("-fx-text-fill: white; -fx-font-family: 'Georgia';");
+        Label hourForecast = new Label(hourlyForecast.get(0).shortForecast);
+        hourForecast.setStyle("-fx-text-fill: white; -fx-font-family: 'Georgia';");
+
+        VBox hourlyBox = new VBox(hourly, hourForecast, hourScroll);
+        hourlyBox.setSpacing(5);
+        hourlyBox.setPadding(new Insets(8, 8, 8, 8));
+        hourlyBox.setStyle("-fx-background-color: rgba(255,255,255,0.15);" +
+                " -fx-border-color: rgba(255,255,255,0.4);" +
+                " -fx-border-width: 1;" +
+                "-fx-border-radius: 15 15 15 15;" +
+                " -fx-background-radius: 15 15 15 15;");
+
+        sevDay = new VBox(hourlyBox, sevDayhb, scrollPane);
+        sevDay.setSpacing(8);
+        sevDay.setPadding(new Insets(10, 5, 5, 5));
+
+        vb = new VBox(currentDay);
+        vb.setAlignment(Pos.CENTER);
+        vb1 = new VBox(sevDay);
+        vb1.setStyle("-fx-background-color: transparent;");
+        bp = new BorderPane();
+        int currHour = Integer.valueOf(hourlyForecast.get(0).startTime.toString().substring(11, 13));
+        bp.setStyle(controller.getBackground(hourlyForecast.get(0).shortForecast, currHour));
+        bp.setTop(hb);
+        bp.setCenter(vb);
+        vb.setMaxWidth(Double.MAX_VALUE);
+        vb.setFillWidth(true);
+        bp.setBottom(vb1);
+        BorderPane.setMargin(vb,  new Insets(20, 20, 10, 20));
+        BorderPane.setMargin(vb1, new Insets(0, 20, 20, 20));
+        BorderPane.setMargin(hb,  new Insets(0));
+        scrollPane.setStyle("-fx-background-color: transparent; -fx-background: transparent;");
+        scrollPane.setContent(weatherForecastvb);
+        scrollPane.setMaxHeight(180);        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scrollPane.setFitToWidth(true);
+        return new Scene(bp, 360, 640);
+    }
+    public Scene buildAustin(){
+        cityDropdown = dropdownMenu(new String[]{"Chicago, IL", "San Francisco, CA", "New York, NY"});
+        sevDayL = new Label("7-DAY FORECAST");
+        sevDayL.setStyle("-fx-font-size: 13px; -fx-font-family: 'Georgia'; -fx-text-fill: white;");
+        ImageView dayIcon = new ImageView(new Image(getClass().getResourceAsStream("/images/sunny.png")));
+        dayIcon.setFitWidth(25);
+        dayIcon.setFitHeight(25);
+        dayIcon.setPreserveRatio(true);
+        ImageView nightIcon = new ImageView(new Image(getClass().getResourceAsStream("/images/clearNight.png")));
+        nightIcon.setFitWidth(25);
+        nightIcon.setFitHeight(25);
+        nightIcon.setPreserveRatio(true);
+
+        dayBtn = new Button();
+        dayBtn.setGraphic(dayIcon);
+        dayBtn.setStyle("-fx-background-color: transparent;");
+        nightBtn = new Button();
+        nightBtn.setGraphic(nightIcon);
+        nightBtn.setStyle("-fx-background-color: transparent;");
+        weatherForecastvb = new VBox();
+        weatherForecastvb.setSpacing(8);
+        ArrayList<Period> forecast = WeatherAPI.getForecast("EWX", 156, 90);
+        ArrayList<Period> hourlyForecast = MyWeatherAPI.getHourlyForecast("EWX", 156, 90);
+        ScrollPane hourScroll = new ScrollPane();
+        if (hourlyForecast != null) {
+            HBox hourHbox = new HBox(20);
+            for (int i = 0; i < 24; i++) {
+                Period hour = hourlyForecast.get(i);
+                Label hourTemp = new Label(hour.temperature + "°");
+                hourTemp.setStyle("-fx-text-fill: white;");
+                Label hourTime;
+                if (i == 0) {
+                    hourTime = new Label("Current");
+                } else {
+                    hourTime = new Label(hour.startTime.toString().substring(11, 13));
+                }
+                hourTime.setStyle("-fx-text-fill: white;");
+                String hourlyShortForecast = hour.shortForecast.toLowerCase();
+                String imagePath;
+                if (hourlyShortForecast.contains("thunder")) {
+                    imagePath = "/images/thunder.png";
+                } else if (hourlyShortForecast.contains("storm")) {
+                    imagePath = "/images/storm.png";
+                } else if (hourlyShortForecast.contains("heavy rain") || hourlyShortForecast.contains("heavy shower")) {
+                    if (Integer.valueOf(hour.startTime.toString().substring(11, 13)) < sunset && Integer.valueOf(hour.startTime.toString().substring(11, 13)) >= sunrise) {
+                        imagePath = "/images/heavy-rain.png";
+                    } else {
+                        imagePath = "/images/nightHeavyRain.png";
+                    }
+                } else if (hourlyShortForecast.contains("light rain") || hourlyShortForecast.contains("drizzle") || hourlyShortForecast.contains("light shower")) {
+                    imagePath = "/images/light-rain.png";
+                } else if (hourlyShortForecast.contains("rain") || hourlyShortForecast.contains("shower")) {
+                    imagePath = "/images/rain.png";
+                } else if (hourlyShortForecast.contains("snow") || hourlyShortForecast.contains("flurries")) {
+                    if (Integer.valueOf(hour.startTime.toString().substring(11, 13)) < sunset && Integer.valueOf(hour.startTime.toString().substring(11, 13)) >= sunrise) {
+                        imagePath = "/images/snowDay.png";
+                    } else {
+                        imagePath = "/images/snowNight.png";
+                    }
+                } else if (hourlyShortForecast.contains("partly cloudy") || hourlyShortForecast.contains("partly sunny")) {
+                    if (Integer.valueOf(hour.startTime.toString().substring(11, 13)) < sunset && Integer.valueOf(hour.startTime.toString().substring(11, 13)) >= sunrise) {
+                        imagePath = "/images/partly-cloudDay.png";
+                    } else {
+                        imagePath = "/images/cloudyNight.png";
+                    }
+                } else if (hourlyShortForecast.contains("cloudy")) {
+                    imagePath = "/images/cloudy.png";
+                } else if (hourlyShortForecast.contains("fog") || hourlyShortForecast.contains("haze")) {
+                    imagePath = "/images/hazefog.png";
+                } else if (hourlyShortForecast.contains("wind") || hourlyShortForecast.contains("breezy")) {
+                    imagePath = "/images/windy.png";
+                } else if (hourlyShortForecast.contains("sunny") || hourlyShortForecast.contains("clear")) {
+                    if (Integer.valueOf(hour.startTime.toString().substring(11, 13)) < sunset && Integer.valueOf(hour.startTime.toString().substring(11, 13)) >= sunrise) {
+                        imagePath = "/images/sunny.png";
+                    } else {
+                        imagePath = "/images/clearNight.png";
+                    }
+                } else {
+                    imagePath = "/images/sunny.png";
+                }
+                ImageView hourIcons = new ImageView(new Image(getClass().getResourceAsStream(imagePath)));
+                hourIcons.setFitWidth(15);
+                hourIcons.setFitHeight(15);
+                hourIcons.setPreserveRatio(true);
+                VBox hourVB = new VBox(hourTemp, hourIcons, hourTime);
+                hourVB.setAlignment(Pos.CENTER);
+                hourVB.setSpacing(4);
+                hourHbox.getChildren().add(hourVB);
+            }
+            hourScroll.setContent(hourHbox);
+            hourScroll.setStyle("-fx-background-color: transparent; -fx-background: transparent;");
+            hourScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+            hourScroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+            hourScroll.setFitToHeight(true);
+        }
+
+        MainController controller = new MainController(forecast, weatherForecastvb);
+        if (forecast != null) {
+            Period today = hourlyForecast.get(0);
+            currentWeather = new Label(today.temperature + "°");
+            location = new Label("Austin");
+            sftLab = new Label(today.shortForecast);
+            sftLab.setStyle("-fx-font-family: 'Georgia'; -fx-text-fill: white;");
+            location.setStyle("-fx-font-size: 25px; -fx-font-family: 'Georgia'; -fx-text-fill: white;");
+            currentWeather.setStyle("-fx-font-size: 96px; -fx-text-fill: white;");
+            currentWeather.setAlignment(Pos.CENTER);
+            currentWeather.setMaxWidth(Double.MAX_VALUE);
+            dayLocvb = new VBox(location, sftLab);
+            dayLocvb.setAlignment(Pos.CENTER);
+            currentDay = new VBox(dayLocvb, currentWeather);
+            currentDay.setAlignment(Pos.CENTER);
+            currentDay.setSpacing(5);
+            controller.setDay(dayBtn, nightBtn);
+            controller.buildForecast();
+        } else {
+            curr = new Label("Could not load weather");
+            currentDay = new VBox(curr);
+        }
+
+        sevDayhb = new DayHbox(dayBtn, sevDayL, nightBtn);
+        sevDayhb.setAlignment(Pos.CENTER);
+        sevDayhb.setPrefSize(360, 50);
+
+        hb = new HBox(cityDropdown);
+        hb.setAlignment(Pos.TOP_RIGHT);
+        hb.setStyle("-fx-background-color: rgba(0, 0, 0, 0.4);");
+        scrollPane = new ScrollPane();
+
+        Label hourly = new Label("Hourly Forecast");
+        hourly.setStyle("-fx-text-fill: white; -fx-font-family: 'Georgia';");
+        Label hourForecast = new Label(hourlyForecast.get(0).shortForecast);
+        hourForecast.setStyle("-fx-text-fill: white; -fx-font-family: 'Georgia';");
+
+        VBox hourlyBox = new VBox(hourly, hourForecast, hourScroll);
+        hourlyBox.setSpacing(5);
+        hourlyBox.setPadding(new Insets(8, 8, 8, 8));
+        hourlyBox.setStyle("-fx-background-color: rgba(255,255,255,0.15);" +
+                " -fx-border-color: rgba(255,255,255,0.4);" +
+                " -fx-border-width: 1;" +
+                "-fx-border-radius: 15 15 15 15;" +
+                " -fx-background-radius: 15 15 15 15;");
+
+        sevDay = new VBox(hourlyBox, sevDayhb, scrollPane);
+        sevDay.setSpacing(8);
+        sevDay.setPadding(new Insets(10, 5, 5, 5));
+
+        vb = new VBox(currentDay);
+        vb.setAlignment(Pos.CENTER);
+        vb1 = new VBox(sevDay);
+        vb1.setStyle("-fx-background-color: transparent;");
+        bp = new BorderPane();
+        int currHour = Integer.valueOf(hourlyForecast.get(0).startTime.toString().substring(11, 13));
+        bp.setStyle(controller.getBackground(hourlyForecast.get(0).shortForecast, currHour));
+        bp.setTop(hb);
+        bp.setCenter(vb);
+        vb.setMaxWidth(Double.MAX_VALUE);
+        vb.setFillWidth(true);
+        bp.setBottom(vb1);
+        BorderPane.setMargin(vb,  new Insets(20, 20, 10, 20));
+        BorderPane.setMargin(vb1, new Insets(0, 20, 20, 20));
+        BorderPane.setMargin(hb,  new Insets(0));
+        scrollPane.setStyle("-fx-background-color: transparent; -fx-background: transparent;");
+        scrollPane.setContent(weatherForecastvb);
+        scrollPane.setMaxHeight(180);        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scrollPane.setFitToWidth(true);
+        return new Scene(bp, 360, 640);
     }
 
-    public Button getSettings(){return settings;}
+    private MenuButton dropdownMenu(String[] cities) {
+        ImageView mapIcon = new ImageView(new Image(getClass().getResourceAsStream("/images/map.png")));
+        mapIcon.setFitWidth(20);
+        mapIcon.setFitHeight(20);
+        mapIcon.setPreserveRatio(true);
+
+        MenuButton menuButton = new MenuButton();
+        menuButton.setGraphic(mapIcon);
+        menuButton.setStyle(
+                "-fx-background-color: transparent;" +
+                        "-fx-border-color: transparent;" +
+                        "-fx-padding: 0;"
+        );
+
+        for (String city : cities) {
+            MenuItem item = new MenuItem(city);
+            menuButton.getItems().add(item);
+        }
+
+        return menuButton;
+    }
+    public void searchCity(Stage primaryStage, Scene homeScene, MenuButton cityDropdown,
+                           Scene chi, Scene sf, Scene ny, Scene aus,
+                           MainUI Chi, MainUI SanF, MainUI NewY, MainUI Aus){
+        for (MenuItem item : cityDropdown.getItems()) {
+            item.setOnAction(e -> {
+                String city = item.getText();
+                if (city.contains("San Francisco, CA")) {
+                    primaryStage.setScene(sf);
+                } else if (city.contains("New York, NY")) {
+                    primaryStage.setScene(ny);
+                } else if (city.contains("Austin, TX")) {
+                    primaryStage.setScene(aus);
+                } else if (city.contains("Chicago, IL")) {
+                    primaryStage.setScene(chi);
+                }
+            });
+        }
+    }
+
+
     public Label getCurr(){return curr;}
-    public TextField getSearchTF(){return searchTF;}
     public Button getBackbtn() {return backbtn;}
-    public Button getSearchBtn() {return searchBtn;}
-    public ComboBox<String> getCityDropdown(){return cityDropdown;}
+    public MenuButton getCityDropdown(){return cityDropdown;}
 }
