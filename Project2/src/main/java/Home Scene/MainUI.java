@@ -34,6 +34,7 @@ public class MainUI {
     private final int sunrise = 7;
     private final int sunset = 19;
 
+    /*ITS CHICAGO*/
     public Scene buildHome() {
         cityDropdown = dropdownMenu(new String[]{"San Francisco, CA", "New York, NY", "Austin, TX"});
         sevDayL = new Label("7-DAY FORECAST");
@@ -62,7 +63,9 @@ public class MainUI {
         MainController controller = new MainController(forecast, weatherForecastvb);
 
         if (forecast != null) {
-            currentDay = buildCurrDay("Chicago",hourlyForecast, controller);
+            currentDay = buildCurrDay("Chicago",hourlyForecast);
+            controller.setDay(dayBtn, nightBtn);
+            controller.buildForecast();
         } else {
             curr.setText("Could not load weather");
         }
@@ -106,7 +109,7 @@ public class MainUI {
 
         return new Scene(bp, 360, 640);
     }
-
+    /*Create the san fran scene*/
     public Scene buildSF() {
         cityDropdown = dropdownMenu(new String[]{"Chicago, IL", "New York, NY", "Austin, TX"});
         sevDayL = new Label("7-DAY FORECAST");
@@ -135,7 +138,9 @@ public class MainUI {
 
         MainController controller = new MainController(forecast, weatherForecastvb);
         if (forecast != null) {
-            currentDay = buildCurrDay("San Francisco",hourlyForecast, controller);
+            currentDay = buildCurrDay("San Francisco",hourlyForecast);
+            controller.setDay(dayBtn, nightBtn);
+            controller.buildForecast();
         } else {
             curr = new Label("Could not load weather");
             currentDay = new VBox(curr);
@@ -179,7 +184,7 @@ public class MainUI {
         scrollPane.setFitToWidth(true);
         return new Scene(bp, 360, 640);
     }
-
+    /*Create the NY scene*/
     public Scene buildNYC() {
         cityDropdown = dropdownMenu(new String[]{"Chicago, IL", "San Francisco, CA", "Austin, TX"});
         sevDayL = new Label("7-DAY FORECAST");
@@ -207,7 +212,9 @@ public class MainUI {
 
         MainController controller = new MainController(forecast, weatherForecastvb);
         if (forecast != null) {
-            currentDay = buildCurrDay("New York",hourlyForecast, controller);
+            currentDay = buildCurrDay("New York",hourlyForecast);
+            controller.setDay(dayBtn, nightBtn);
+            controller.buildForecast();
         } else {
             curr = new Label("Could not load weather");
             currentDay = new VBox(curr);
@@ -251,7 +258,7 @@ public class MainUI {
         scrollPane.setFitToWidth(true);
         return new Scene(bp, 360, 640);
     }
-
+    /*Create austin scene*/
     public Scene buildAustin() {
         cityDropdown = dropdownMenu(new String[]{"Chicago, IL", "San Francisco, CA", "New York, NY"});
         sevDayL = new Label("7-DAY FORECAST");
@@ -280,7 +287,9 @@ public class MainUI {
 
         MainController controller = new MainController(forecast, weatherForecastvb);
         if (forecast != null) {
-            currentDay = buildCurrDay("Austin",hourlyForecast, controller);
+            currentDay = buildCurrDay("Austin",hourlyForecast);
+            controller.setDay(dayBtn, nightBtn);
+            controller.buildForecast();
         } else {
             curr = new Label("Could not load weather");
             currentDay = new VBox(curr);
@@ -324,7 +333,11 @@ public class MainUI {
         scrollPane.setFitToWidth(true);
         return new Scene(bp, 360, 640);
     }
+    /*We are painfully aware that each of these cities could be put into the same
+     constructor but hard coding and copy and paste was easier*/
 
+    /*Create the dropdown menu on the top right that allows switching cities
+    was orginally a combobox but combobox didnt allow an icon*/
     private MenuButton dropdownMenu(String[] cities) {
         ImageView mapIcon = new ImageView(new Image(getClass().getResourceAsStream("/images/map.png")));
         mapIcon.setFitWidth(20);
@@ -339,32 +352,32 @@ public class MainUI {
                         "-fx-padding: 0;"
         );
 
-        for (String city : cities) {
+        for (String city : cities) { //this loop makes each city an item in its dropbox
             MenuItem item = new MenuItem(city);
             menuButton.getItems().add(item);
         }
 
         return menuButton;
     }
-
+    /*Creates the hourly forecast scroller*/
     private ScrollPane buildHourlyScroll(ArrayList<Period> hourlyForecast) {
         ScrollPane hourScroll = new ScrollPane();
         if (hourlyForecast != null) {
-            HBox hourHbox = new HBox(20);
-            for (int i = 0; i < 24; i++) {
+            HBox hourHbox = new HBox(20); //space out each box
+            for (int i = 0; i < 24; i++) { //loop the entire 24 hours adding the time (in military idk how to change)
                 Period hour = hourlyForecast.get(i);
                 Label hourTemp = new Label(hour.temperature + "°");
                 hourTemp.setStyle("-fx-text-fill: white;");
 
                 Label hourTime;
-                if (i == 0) {
+                if (i == 0) { //if were at 0 dont add the time just say current
                     hourTime = new Label("Current");
 
                 } else {
-                    hourTime = new Label(hour.startTime.toString().substring(11, 13));
+                    hourTime = new Label(hour.startTime.toString().substring(11, 13)); //11 and 13 are indices of the hours of the huge line of text startTime prints out
                 }
                 hourTime.setStyle("-fx-text-fill: white;");
-
+                /*Set images based on the hourly weather*/
                 String hourlyShortForecast = hour.shortForecast.toLowerCase();
                 String imagePath;
                 if (hourlyShortForecast.contains("thunder")) {
@@ -416,7 +429,7 @@ public class MainUI {
                 hourIcons.setFitWidth(15);
                 hourIcons.setFitHeight(15);
                 hourIcons.setPreserveRatio(true);
-                VBox hourVB = new VBox(hourTemp, hourIcons, hourTime);
+                VBox hourVB = new VBox(hourTemp, hourIcons, hourTime); //add everything to a vbox and then add to the hbox
                 hourVB.setAlignment(Pos.CENTER);
                 hourVB.setSpacing(4);
                 hourHbox.getChildren().add(hourVB);
@@ -429,7 +442,7 @@ public class MainUI {
         }
         return hourScroll;
     }
-
+    /*Build and style the entire hourly forecast, everythign between the current temp and 7 day forecast*/
     private VBox buildHourlyForecast(ArrayList<Period> hourlyForecast, ScrollPane hourlyScroll){
         Label hourly = new Label("Hourly Forecast");
         hourly.setStyle("-fx-text-fill: white; -fx-font-family: 'Georgia';");
@@ -445,8 +458,8 @@ public class MainUI {
                 " -fx-background-radius: 15 15 15 15;");
         return hourlyBox;
     }
-
-    private VBox buildCurrDay(String cityName,ArrayList<Period> hourlyForecast, MainController controller){
+    /*Builds and styles the top of the screen (7*/
+    private VBox buildCurrDay(String cityName,ArrayList<Period> hourlyForecast){
         Period today = hourlyForecast.get(0);
         currentWeather = new Label(today.temperature + "°");
         location = new Label(cityName);
@@ -461,17 +474,13 @@ public class MainUI {
         VBox currDay = new VBox(dayLocvb,currentWeather);
         currDay.setAlignment(Pos.CENTER);
         currDay.setSpacing(5);
-        controller.setDay(dayBtn, nightBtn);
-        controller.buildForecast();
-
-
         return currDay;
     }
-
+    /*Allows each item in the menu to be clickable and go to their respective scenes*/
     public void searchCity(Stage primaryStage, Scene homeScene, MenuButton cityDropdown,
                            Scene chi, Scene sf, Scene ny, Scene aus,
                            MainUI Chi, MainUI SanF, MainUI NewY, MainUI Aus){
-        for (MenuItem item : cityDropdown.getItems()) {
+        for (MenuItem item : cityDropdown.getItems()) { //set an on action for each item in the menu based on cityDropdown
             item.setOnAction(e -> {
                 String city = item.getText();
                 if (city.contains("San Francisco, CA")) {

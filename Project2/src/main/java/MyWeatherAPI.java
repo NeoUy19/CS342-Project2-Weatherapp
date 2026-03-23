@@ -14,7 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper; // version 2.11.1
 
 public class MyWeatherAPI extends WeatherAPI {
 
-    public static ArrayList<Period> getHourlyForecast(String region, int gridx, int gridy) {
+    public static ArrayList<Period> getHourlyForecast(String region, int gridx, int gridy) { //Copied from WeatherAPI, only changes /forecast/hourly to get hourly periods
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create("https://api.weather.gov/gridpoints/"+region+"/"+String.valueOf(gridx)+","+String.valueOf(gridy)+"/forecast/hourly"))
                 .build();
@@ -33,10 +33,11 @@ public class MyWeatherAPI extends WeatherAPI {
     }
     public static Root getObject(String json) {
         ObjectMapper om = new ObjectMapper();
-        om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false); //this is added because hourly forecast has more attributes than the normal 12 hour forecast, ignores the new ones
         Root toRet = null;
         try {
             toRet = om.readValue(json, Root.class);
+            ArrayList<Period> p = toRet.properties.periods;
         } catch (Exception e) {
             e.printStackTrace();
         }

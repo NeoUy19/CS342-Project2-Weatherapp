@@ -11,14 +11,14 @@ public class MainController{
     private VBox weatherForecastvb;
     private ArrayList<Period> forecast;
 
-    private final int sunrise = 7;
+    private final int sunrise = 7; //hardcoded sunrise and sunset LOLLLLL
     private final int sunset = 19;
 
     public MainController(ArrayList<Period> forecast, VBox weatherForecastvb) {
         this.forecast = forecast;
         this.weatherForecastvb = weatherForecastvb;
     }
-
+    /*Sets logic for the day and night buttons, when oone is clicked set isday on or off then call build forecast below*/
     public void setDay(Button dayBtn, Button nightBtn) {
         this.dayBtn = dayBtn;
         this.nightBtn = nightBtn;
@@ -35,9 +35,9 @@ public class MainController{
 
     public void buildForecast(){
         weatherForecastvb.getChildren().clear();
-        if (forecast.get(0).name.contains("night")){
+        if (forecast.get(0).name.contains("night")){ //This checks if the current forecast is night (totally could change it to hourly but too lazy)
             if(isDay()) { //day is clicked
-                weatherForecastvb.getChildren().addAll(
+                weatherForecastvb.getChildren().addAll( //adds all the current day forecasts to the vb in the 7 day scrollPane
                         new DayHbox(forecast.get(1),this),
                 new DayHbox(forecast.get(3), this),
                 new DayHbox(forecast.get(5), this),
@@ -46,18 +46,19 @@ public class MainController{
                 new DayHbox(forecast.get(11), this),
                 new DayHbox(forecast.get(13), this));
             }
-            else{
-                weatherForecastvb.getChildren().addAll(
+            else{ //night is clicked
+                weatherForecastvb.getChildren().addAll( //add all the night forecasts
                         new DayHbox(forecast.get(2), this),
                 new DayHbox(forecast.get(4), this),
                 new DayHbox(forecast.get(6), this),
                 new DayHbox(forecast.get(8), this),
                 new DayHbox(forecast.get(10), this),
                 new DayHbox(forecast.get(12), this));
+                // there is one missing hbox here because the API does not go that far
             }
         }
         else {
-            if (isDay()) {
+            if (isDay()) { //day is clicked
                 weatherForecastvb.getChildren().addAll(
                   new DayHbox(forecast.get(0), this),
                 new DayHbox(forecast.get(2), this),
@@ -67,7 +68,7 @@ public class MainController{
                 new DayHbox(forecast.get(10), this),
                 new DayHbox(forecast.get(12), this));
             }
-            else {
+            else { //night is clicked
                 weatherForecastvb.getChildren().addAll(
                           new DayHbox(forecast.get(1), this),
                         new DayHbox(forecast.get(3), this),
@@ -79,14 +80,14 @@ public class MainController{
             }
         }
     }
-
+    /*Set the background based on the weather and current time */
     public String getBackground(String hourlyShortForecast, int hourlyIsDay){
         String hourlyShort =  hourlyShortForecast.toLowerCase();
             if (hourlyShort.contains("thunder") || hourlyShort.contains("storm")) {
-                return "-fx-background-color: linear-gradient(to bottom, #1c1c2e, #2d2d44);";
+                return "-fx-background-color: linear-gradient(to bottom, #1c1c2e, #2d2d44);";//Creates a gradient that starts with the first hex at the top and second on the bottom
             }
             if (hourlyShort.contains("heavy rain") || hourlyShort.contains("heavy shower")) {
-                if (hourlyIsDay > sunrise  &&  hourlyIsDay < sunset) {
+                if (hourlyIsDay > sunrise  &&  hourlyIsDay < sunset) { //these if statements are basically if its day or not
                     return "-fx-background-color: linear-gradient(to bottom, #3a4a5c, #5a6a7c);";
                 } else {
                     return "-fx-background-color: linear-gradient(to bottom, #1a2a3a, #2a3a4a);";

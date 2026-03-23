@@ -8,36 +8,42 @@ import javafx.geometry.Pos;
 import javafx.scene.layout.AnchorPane;
 import weather.WeatherAPI;
 import javafx.scene.control.Button;
+
+/*Custom HBox class because HBoxes were getting repetive*/
 public class DayHbox extends HBox{
     private MainController controller;
+    /*Creates a row in the 7 day forecast scroll panel*/
     public DayHbox(Period time,MainController controller){
         this.controller=controller;
-        Label label = new Label (
+        Label label = new Label ( //This label shows all the required info for Minimum score
                 time.name + " " + time.temperature + "° \n" + time.shortForecast + "\n" + "Wind Speed: " + time.windSpeed + " " + time.windDirection
         );
         label.setStyle("-fx-font-size: 12px; -fx-font-family: 'Georgia'; -fx-text-fill: white;");
         label.setWrapText(true);
 
+        /*Create the weather Icon for the box by calliing getWeatherIcon*/
         ImageView icon = getWeatherIcon(time.shortForecast);
         AnchorPane iconPane = new AnchorPane(icon);
-        iconPane.setPrefWidth(50);
+        iconPane.setPrefWidth(50); /*Set sizing and dont allow it to move with AnchorPane*/
         iconPane.setMinWidth(50);
         iconPane.setMaxWidth(50);
         AnchorPane.setRightAnchor(icon, 5.0);
         AnchorPane.setTopAnchor(icon, 15.0);
-        label.setMaxWidth(225);
+
+        label.setMaxWidth(225); //Set label size this was a pain in the ass because the shortforecast would be too long (also made the font smaller so everything can fit
         label.setMinWidth(225);
-        setMaxHeight(Double.MAX_VALUE);
+        setMaxHeight(Double.MAX_VALUE); // allow HBox to grow if everything cant fit
         getChildren().addAll(label, iconPane);
         setPrefSize(360,75);
         setPadding(new Insets (5,5,5,5));
-        setStyle("-fx-background-color: rgba(255,255,255,0.15);" +
-                " -fx-border-color: rgba(255,255,255,0.4);" +
+        setStyle("-fx-background-color: rgba(255,255,255,0.15);" + //White background with 15% opacity
+                " -fx-border-color: rgba(255,255,255,0.4);" + // parameters are red,green,blue, and opacity
                 " -fx-border-width: 1;" +
-                "-fx-border-radius: 15 15 15 15;" +
+                "-fx-border-radius: 15 15 15 15;" + //round off borders
                 " -fx-background-radius: 15 15 15 15;");
     }
 
+    /* This is the HBox above the scroll panel with the 7day forecast and the flipping day and night*/
     public DayHbox(Button dayBtn, Label label, Button nightBtn){
         getChildren().addAll(dayBtn, label, nightBtn);
         setPrefSize(360, 50);
@@ -46,13 +52,15 @@ public class DayHbox extends HBox{
         setStyle("-fx-background-color: rgba(255,255,255,0.15);" +
                 " -fx-border-color: rgba(255,255,255,0.4);" +
                 " -fx-border-width: 1px;" +
-                " -fx-border-radius: 15;" +
-                " -fx-background-radius: 15;");
+                " -fx-border-radius: 15 15 15 15;" +
+                " -fx-background-radius: 15 15 15 15;");
     }
+
+    /*Set the icon for each HBox in the 7 day forecast ICONS FROM Freepik ON FLATICON S/O THEM*/
     private ImageView getWeatherIcon(String shortForecast){
         String forecast = shortForecast.toLowerCase();
         String imagePath;
-        boolean isDay = controller.isDay();
+        boolean isDay = controller.isDay(); //image changes based on weather or not the user clicked on the day or night button
 
         if (forecast.contains("thunder")) {
             imagePath = "/images/thunder.png";
