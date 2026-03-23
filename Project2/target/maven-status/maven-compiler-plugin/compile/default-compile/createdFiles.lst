@@ -1,8 +1,6 @@
 weather/Properties.class
 DayHbox.class
-SettingsUI.class
 MainUI.class
-SettingsController.class
 MyWeatherAPI.class
 weather/Elevation.class
 weather/Root.class

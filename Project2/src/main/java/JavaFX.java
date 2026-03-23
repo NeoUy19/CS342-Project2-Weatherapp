@@ -36,8 +36,6 @@ public class JavaFX extends Application {
 		NewY.searchCity(primaryStage, NY, NewY.getCityDropdown(), Chicago, SF, NY, Austin, Chi, SanF, NewY, Aus);
 		Aus.searchCity(primaryStage, Austin, Aus.getCityDropdown(), Chicago, SF, NY, Austin, Chi, SanF, NewY, Aus);
 
-		SettingsUI settings = new SettingsUI();
-		Scene settingsPage = settings.buildSettings();
 
 		primaryStage.setScene(Chicago);
 		primaryStage.setResizable(false);
